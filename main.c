@@ -16,7 +16,10 @@
 
 #define INPUT 0
 #define OUTPUT 1
-# define INPUT_PULLUP 2
+#define INPUT_PULLUP 2
+
+#define JOY_DEADZONE 20
+#define JOY_MAX 1023
 
 //#define MAX_DEVICES	1
 
@@ -46,4 +49,33 @@ int main ()
     pinMode(VERT_PIN, INPUT);
     pinMode(HORZ_PIN, INPUT);
     pinMode(SEL_PIN, INPUT_PULLUP);
+
+    while(1) // Main loop
+    {
+        int horz = readAnalog(HORZ_PIN); // Read horizontal value
+        int vert = readAnalog(VERT_PIN); // Read vertical value
+        int sel = digitalRead(SEL_PIN);  // Read select button state
+
+        // Convert the analog joystick readings to LED matrix coordinates
+        int led_x = horz * 8 / JOY_MAX;
+        int led_y = vert * 8 / JOY_MAX;
+
+        // If the select button is pressed
+        if (sel == LOW) {
+            // Toggle the LED at the current coordinates
+            if (max7219b_get(led_x) & (1 << led_y)) {
+                max7219b_clr(led_x, led_y);
+            } else {
+                max7219b_set(led_x, led_y);
+            }
+            // Wait for the select button to be released
+            while (digitalRead(SEL_PIN) == LOW);
+            _delay_ms(20); // Debouncing delay
+        }
+
+        // Update the LED matrix
+        max7219b_out();
+    }
+
+    return 0;
 }
