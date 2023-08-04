@@ -10,3 +10,4 @@
 #define digitalRead(pin) (!!(PIND & (1 << pin))) // Only for PORTD
 #define digitalWrite(pin, value) (value ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin))) // Only for PORTD
 #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin))) // Only for PORTD
+
