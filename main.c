@@ -3,6 +3,8 @@
 #include <util/delay.h>
 // #include <avr/io.h> **already exists in header
 
+extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
+
 #define VERT_PIN PC0 //  A0
 #define HORZ_PIN PC1 //  A1
 #define SEL_PIN PD2  //  D2
@@ -26,6 +28,11 @@
 
 //#define MAX_DEVICES	1
 
+int map(int x, int in_min, int in_max, int out_min, int out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 uint16_t readAnalog(uint8_t pin)
 {
     ADMUX = (ADMUX & 0xF8) | (pin & 0x07); // select the ADC channel
@@ -40,8 +47,7 @@ void adc_init()
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // ADC enabled, prescaler division=128 (16Mhz/128=125Khz)
 }
 
-int x = 0;
-int y = 0;
+
 
 int main ()
 {
@@ -49,34 +55,50 @@ int main ()
     max7219_init();
     adc_init();
 
+
+
     pinMode(VERT_PIN, INPUT);
     pinMode(HORZ_PIN, INPUT);
     pinMode(SEL_PIN, INPUT_PULLUP);
 
-    while(1) // Main loop
+    int last_x = 0;
+    int last_y = 0;
+
+    int x = 1023 - readAnalog(HORZ_PIN);
+    int y = 1023 - readAnalog(VERT_PIN);
+
+   while(1) 
     {
-        int horz = readAnalog(HORZ_PIN); // Read horizontal value
-        int vert = readAnalog(VERT_PIN); // Read vertical value
-        int sel = digitalRead(SEL_PIN);  // Read select button state
+        int raw_x = readAnalog(HORZ_PIN);
+        int raw_y = readAnalog(VERT_PIN);
 
-        // Convert the analog joystick readings to LED matrix coordinates
-        int led_x = horz * 8 / JOY_MAX;
-        int led_y = vert * 8 / JOY_MAX;
+        // Convert the readings to LED matrix positions
+        int x = raw_x / 128;
+        int y = raw_y / 128;
 
-        // If the select button is pressed
-        if (sel == LOW) {
-            // Toggle the LED at the current coordinates
-            if (max7219b_get(led_x) & (1 << led_y)) {
-                max7219b_clr(led_x, led_y);
-            } else {
-                max7219b_set(led_x, led_y);
-            }
-            // Wait for the select button to be released
-            while (digitalRead(SEL_PIN) == LOW);
-            _delay_ms(20); // Debouncing delay
+        // Check if the position has changed significantly
+        if(abs(x - last_x) > 64 || abs(y - last_y) > 64) 
+        {
+            // Update the last known positions
+            last_x = x;
+            last_y = y;
+
+            // Clear the previous LED
+            max7219b_clr(7 - last_y, last_x);  // Clear the previously set pixel
+
+            // Update the LED position
+            y = 7 - map(raw_y, 0, 1023, 0, 7); // Reverse direction so up is up
+            x = map(raw_x, 0, 1023, 0, 7);     // No need to reverse the x-axis
+            max7219b_set(y, x);                // Set the new pixel
+
+            _delay_ms(10); // avoid rapid refresh
         }
 
-        // Update the LED matrix
+        if (!digitalRead(SEL_PIN)) 
+        {
+            max7219b_clr(y, x);   // Clear the LED if the joystick is pressed
+        }
+
         max7219b_out();
     }
 
