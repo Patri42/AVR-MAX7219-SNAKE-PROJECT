@@ -20,8 +20,32 @@
 
 //#define MAX_DEVICES	1
 
+#define VERT_THRESHOLD_LOW 300
+#define VERT_THRESHOLD_HIGH 700
+#define HORZ_THRESHOLD_LOW 300
+#define HORZ_THRESHOLD_HIGH 700
+
 int x = 0;
 int y = 0;
+
+int readAnalog(uint8_t pin) {
+    // TODO: write code here to read from the ADC
+    return 0;  // placeholder return value
+}
+
+void setPoint(int x, int y) {
+    // Clear the display buffer
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            max7219b_clr(i, j);
+    }
+}
+
+    // Set the point in the buffer
+    max7219b_set(x, y);
+    // Output the buffer to the display
+    max7219b_out();
+}
 
 int main ()
     {
