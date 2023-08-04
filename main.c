@@ -18,6 +18,9 @@
 #define OUTPUT 1
 #define INPUT_PULLUP 2
 
+#define LOW 0
+#define HIGH 1
+
 #define JOY_DEADZONE 20
 #define JOY_MAX 1023
 
