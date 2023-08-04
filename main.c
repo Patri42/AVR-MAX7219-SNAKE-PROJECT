@@ -1,7 +1,7 @@
 #include "max72xx.h"
 #include <stdio.h>
 #include <util/delay.h>
-#include <avr/io.h>
+// #include <avr/io.h> **already exists in header
 
 #define VERT_PIN PC0 //  A0
 #define HORZ_PIN PC1 //  A1
@@ -11,4 +11,8 @@
 #define digitalWrite(pin, value) (value ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin))) // Only for PORTD
 #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin))) // Only for PORTD
 
-#define MAX_DEVICES	1
+//#define MAX_DEVICES	1
+
+int x = 0;
+int y = 0;
+
