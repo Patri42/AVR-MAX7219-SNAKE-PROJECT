@@ -32,4 +32,27 @@ int main ()
 	    pinMode(HORZ_PIN, INPUT);
 	    pinMode(SEL_PIN, INPUT_PULLUP);
 
+
+        while (1) {  // main loop
+            int vert = readAnalog(VERT_PIN);
+            int horz = readAnalog(HORZ_PIN);
+            if (vert < VERT_THRESHOLD_LOW) {
+                y = y > 0 ? y - 1 : 0;
+            }
+            if (vert > VERT_THRESHOLD_HIGH) {
+                y = y < 7 ? y + 1 : 7;
+            }
+            if (horz < HORZ_THRESHOLD_LOW) {
+                x = x > 0 ? x - 1 : 0;
+            }
+            if (horz > HORZ_THRESHOLD_HIGH) {
+                x = x < 7 ? x + 1 : 7;
+            }
+            if (!digitalRead(SEL_PIN)) {
+                x = y = 0;
+            }
+            setPoint(x, y);
+            _delay_ms(100);
+        }
+    return 0;
     }
