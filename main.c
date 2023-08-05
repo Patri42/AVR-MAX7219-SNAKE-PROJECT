@@ -76,7 +76,6 @@ void adc_init()
 }
 
 
-
 int main () {
     int x = 0; // Initialize x position
     int y = 0; // Initialize y position
