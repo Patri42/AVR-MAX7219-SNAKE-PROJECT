@@ -16,22 +16,22 @@
  * - VCC is connected to Arduino Uno pin 5V
  */
 
-
-
 #include "max72xx.h"
 #include <stdio.h>
 #include <util/delay.h>
 
+// Define constants for joystick operation
 #define VERT_PIN PC0 //  A0
 #define HORZ_PIN PC1 //  A1
 #define SEL_PIN PD2  //  D2
 
+// Define macros for digital read/write operations (works only for PORTD)
 #define digitalRead(pin) (!!(PIND & (1 << pin))) // Only for PORTD
 #define digitalWrite(pin, value) (value ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin))) // Only for PORTD
 
 #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin), (mode == INPUT_PULLUP ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin)))))
 
-
+// Define constants for pin mode selection
 #define INPUT 0
 #define OUTPUT 1
 #define INPUT_PULLUP 2
@@ -42,13 +42,18 @@
 #define JOY_DEADZONE 20
 #define JOY_MAX 1023
 
+// Define thresholds for joystick readings
 #define JOY_THRESHOLD_LOW 300
 #define JOY_THRESHOLD_HIGH 700
 
+// Define prescaler division for ADC 
 #define ADC_PRESCALER_DIVISION (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) // ADC prescaler division=128 (16Mhz/128=125Khz)
 
+// Externally declared buffer for max7219
 extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 
+
+// Function to clear max7219 buffer
 void max7219b_clrAll(void)
 {
     for (uint8_t i = 0; i < MAX7219_BUFFER_SIZE; i++) {
@@ -56,11 +61,13 @@ void max7219b_clrAll(void)
     }
 }
 
+// Function to map values from one range to another
 int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+// Function to read analog value from specified pin
 uint16_t readAnalog(uint8_t pin)
 {
     ADMUX = (ADMUX & 0xF8) | (pin & 0x07); // select the ADC channel
@@ -69,6 +76,7 @@ uint16_t readAnalog(uint8_t pin)
     return ADCW; // return the ADC value
 }
 
+// Function to initialize ADC 
 void adc_init()
 {
     ADMUX = (1 << REFS0); // reference voltage on AVCC
@@ -78,42 +86,42 @@ void adc_init()
 
 
 int main () {
-    int x = 0;
-    int y = 0;
+    int x = 0; // Initialize x position
+    int y = 0; // Initialize y position
 
-    init_serial();
-    max7219_init();
-    adc_init();
+    init_serial(); // Initialize serial communication
+    max7219_init(); // Initialize max7219 display
+    adc_init(); // Initialize ADC for joystick
 
-    pinMode(VERT_PIN, INPUT);
-    pinMode(HORZ_PIN, INPUT);
-    pinMode(SEL_PIN, INPUT_PULLUP);
+    pinMode(VERT_PIN, INPUT); // Set vertical joystick pin as input
+    pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
+    pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
 
     while(1) 
     {
-        int horz = 1023 - readAnalog(HORZ_PIN);
-        int vert = 1023 - readAnalog(VERT_PIN);
+        int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
+        int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
         if (vert < JOY_THRESHOLD_LOW) {
-            y = y < 7 ? y + 1 : 7;
+            y = y < 7 ? y + 1 : 7; // Increase y if joystick moves up and within display limit
         }
         if (vert > JOY_THRESHOLD_HIGH) {
-            y = y > 0 ? y - 1 : 0;
+            y = y > 0 ? y - 1 : 0; // Decrease y if joystick moves down and within display limit
         }
         if (horz > JOY_THRESHOLD_HIGH) {
-            x = x < 15 ? x + 1 : 15;
+            x = x < 15 ? x + 1 : 15; // Increase x if joystick moves right and within display limit
         }
         if (horz < JOY_THRESHOLD_LOW) {
-            x = x > 0 ? x - 1 : 0;
+            x = x > 0 ? x - 1 : 0; // Decrease x if joystick moves left and within display limit
         }
         if (!digitalRead(SEL_PIN)) 
         {
-            max7219b_clrAll();
-            max7219b_out();
+            max7219b_clrAll(); // Clear the display if the selection button is pressed
+            max7219b_out(); // Output the cleared buffer to display
         }
-        max7219b_set(y, x);
-        max7219b_out();
+        max7219b_set(y, x); // Set the pixel at current (x, y) location
+        max7219b_out(); // Output the updated buffer to display
 
-        _delay_ms(100);
+        _delay_ms(100); // Delay for 100 ms for debouncing
     }
 
     return 0;
