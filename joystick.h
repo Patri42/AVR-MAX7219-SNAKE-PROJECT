@@ -3,7 +3,7 @@
 #ifndef JOYSTICK_H
 #define JOYSTICK_H
 
-#include "pin_defs.h"
+#include "pin_defs.h" 
 
 // Define constants for joystick operation
 #define VERT_PIN PC0 //  A0

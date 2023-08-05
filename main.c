@@ -20,50 +20,6 @@
 #include "display.h"
 #include <util/delay.h>
 
-
-
-// Define macros for digital read/write operations (works only for PORTD)
-#define digitalRead(pin) (!!(PIND & (1 << pin))) // Only for PORTD
-#define digitalWrite(pin, value) (value ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin))) // Only for PORTD
-
-#define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin), (mode == INPUT_PULLUP ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin)))))
-
-
-
-
-// Define prescaler division for ADC 
-#define ADC_PRESCALER_DIVISION (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) // ADC prescaler division=128 (16Mhz/128=125Khz)
-
-// Externally declared buffer for max7219
-extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
-
-
-// Function to clear max7219 buffer
-void max7219b_clrAll(void)
-{
-    for (uint8_t i = 0; i < MAX7219_BUFFER_SIZE; i++) {
-        max7219_buffer[i] = 0;
-    }
-}
-
-
-// Function to read analog value from specified pin
-uint16_t readAnalog(uint8_t pin)
-{
-    ADMUX = (ADMUX & 0xF8) | (pin & 0x07); // select the ADC channel
-    ADCSRA |= (1 << ADSC); // start the conversion
-    while (ADCSRA & (1 << ADSC)); // wait for the conversion to finish
-    return ADCW; // return the ADC value
-}
-
-// Function to initialize ADC 
-void adc_init()
-{
-    ADMUX = (1 << REFS0); // reference voltage on AVCC
-    ADCSRA = (1 << ADEN) | ADC_PRESCALER_DIVISION; // ADC enabled, prescaler division=128 (16Mhz/128=125Khz)
-}
-
-
 int main () {
     int x = 0; // Initialize x position
     int y = 0; // Initialize y position
