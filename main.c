@@ -11,7 +11,7 @@ extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 
 #define digitalRead(pin) (!!(PIND & (1 << pin))) // Only for PORTD
 #define digitalWrite(pin, value) (value ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin))) // Only for PORTD
-//#define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin))) // Only for PORTD
+// #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin))) // Only for PORTD
 
 #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin), (mode == INPUT_PULLUP ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin)))))
 
@@ -54,7 +54,8 @@ void adc_init()
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // ADC enabled, prescaler division=128 (16Mhz/128=125Khz)
 }
 
-
+int x = 0;
+int y = 0;
 
 int main ()
 {
@@ -62,41 +63,35 @@ int main ()
     max7219_init();
     adc_init();
 
-
-
     pinMode(VERT_PIN, INPUT);
     pinMode(HORZ_PIN, INPUT);
     pinMode(SEL_PIN, INPUT_PULLUP);
 
-    // int last_x = 0;
-    // int last_y = 0;
-
-    // int x,y;
-
-    // int x = 1023 - readAnalog(HORZ_PIN);
-    // int y = 1023 - readAnalog(VERT_PIN);
-
     while(1) 
     {
-        int raw_x = 1023 - readAnalog(HORZ_PIN);
-        int raw_y = 1023 - readAnalog(VERT_PIN);
-
-        // Convert the readings to LED matrix positions
-        int x = map(raw_x, 0, 1023, 0, 7);
-        int y = map(raw_y, 0, 1023, 0, 7);
-
-        max7219b_clrAll();
-        max7219b_set(7-y, x); // Note that we are reversing y because the origin (0,0) is at the top-left corner
-        max7219b_out();
-
+        int horz = 1023 - readAnalog(HORZ_PIN);
+        int vert = 1023 - readAnalog(VERT_PIN);
+        if (vert < 300) {
+            y = y < 7 ? y + 1 : 7;
+        }
+        if (vert > 700) {
+            y = y > 0 ? y - 1 : 0;
+        }
+        if (horz > 700) {
+            x = x < 15 ? x + 1 : 15;
+        }
+        if (horz < 300) {
+            x = x > 0 ? x - 1 : 0;
+        }
         if (!digitalRead(SEL_PIN)) 
         {
-            _delay_ms(500); // delay to debounce the button
-            max7219b_clrAll(); // Clear all LEDs if the joystick is pressed
+            max7219b_clrAll();
             max7219b_out();
         }
+        max7219b_set(y, x);
+        max7219b_out();
 
-        _delay_ms(10); // delay to slow down the refresh rate
+        _delay_ms(100);
     }
 
     return 0;
