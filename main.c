@@ -1,3 +1,23 @@
+/**
+ * Hardware Setup
+ * 
+ * Joystick:
+ * - HORZ is connected to Arduino Uno pin A1
+ * - VERT is connected to Arduino Uno pin A0
+ * - SEL is connected to Arduino Uno pin D2
+ * - GND is connected to Arduino Uno pin GND
+ * - VCC is connected to Arduino Uno pin 5V
+ * 
+ * Matrix:
+ * - CS is connected to Arduino Uno pin D10
+ * - DIN is connected to Arduino Uno pin D11
+ * - CLK is connected to Arduino Uno pin D13
+ * - GND is connected to Arduino Uno pin GND
+ * - VCC is connected to Arduino Uno pin 5V
+ */
+
+
+
 #include "max72xx.h"
 #include <stdio.h>
 #include <util/delay.h>
