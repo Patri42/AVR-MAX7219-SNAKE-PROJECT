@@ -16,14 +16,11 @@
  * - VCC is connected to Arduino Uno pin 5V
  */
 
-#include "max72xx.h"
-#include <stdio.h>
+#include "joystick.h"
+#include "display.h"
 #include <util/delay.h>
 
-// Define constants for joystick operation
-#define VERT_PIN PC0 //  A0
-#define HORZ_PIN PC1 //  A1
-#define SEL_PIN PD2  //  D2
+
 
 // Define macros for digital read/write operations (works only for PORTD)
 #define digitalRead(pin) (!!(PIND & (1 << pin))) // Only for PORTD
@@ -31,17 +28,8 @@
 
 #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin), (mode == INPUT_PULLUP ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin)))))
 
-// Define constants for pin mode selection
-#define INPUT 0
-#define OUTPUT 1
-#define INPUT_PULLUP 2
 
-#define LOW 0
-#define HIGH 1
 
-// Define thresholds for joystick readings
-#define JOY_THRESHOLD_LOW 300
-#define JOY_THRESHOLD_HIGH 700
 
 // Define prescaler division for ADC 
 #define ADC_PRESCALER_DIVISION (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) // ADC prescaler division=128 (16Mhz/128=125Khz)
