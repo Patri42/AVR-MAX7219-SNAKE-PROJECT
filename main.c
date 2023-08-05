@@ -1,9 +1,6 @@
 #include "max72xx.h"
 #include <stdio.h>
 #include <util/delay.h>
-// #include <avr/io.h> **already exists in header
-
-extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 
 #define VERT_PIN PC0 //  A0
 #define HORZ_PIN PC1 //  A1
@@ -11,7 +8,6 @@ extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 
 #define digitalRead(pin) (!!(PIND & (1 << pin))) // Only for PORTD
 #define digitalWrite(pin, value) (value ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin))) // Only for PORTD
-// #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin))) // Only for PORTD
 
 #define pinMode(pin, mode) (mode == OUTPUT ? (DDRD |= (1 << pin)) : (DDRD &= ~(1 << pin), (mode == INPUT_PULLUP ? (PORTD |= (1 << pin)) : (PORTD &= ~(1 << pin)))))
 
@@ -26,7 +22,12 @@ extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 #define JOY_DEADZONE 20
 #define JOY_MAX 1023
 
-//#define MAX_DEVICES	1
+#define JOY_THRESHOLD_LOW 300
+#define JOY_THRESHOLD_HIGH 700
+
+#define ADC_PRESCALER_DIVISION (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) // ADC prescaler division=128 (16Mhz/128=125Khz)
+
+extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 
 void max7219b_clrAll(void)
 {
@@ -51,14 +52,15 @@ uint16_t readAnalog(uint8_t pin)
 void adc_init()
 {
     ADMUX = (1 << REFS0); // reference voltage on AVCC
-    ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); // ADC enabled, prescaler division=128 (16Mhz/128=125Khz)
+    ADCSRA = (1 << ADEN) | ADC_PRESCALER_DIVISION; // ADC enabled, prescaler division=128 (16Mhz/128=125Khz)
 }
 
-int x = 0;
-int y = 0;
 
-int main ()
-{
+
+int main () {
+    int x = 0;
+    int y = 0;
+
     init_serial();
     max7219_init();
     adc_init();
@@ -71,16 +73,16 @@ int main ()
     {
         int horz = 1023 - readAnalog(HORZ_PIN);
         int vert = 1023 - readAnalog(VERT_PIN);
-        if (vert < 300) {
+        if (vert < JOY_THRESHOLD_LOW) {
             y = y < 7 ? y + 1 : 7;
         }
-        if (vert > 700) {
+        if (vert > JOY_THRESHOLD_HIGH) {
             y = y > 0 ? y - 1 : 0;
         }
-        if (horz > 700) {
+        if (horz > JOY_THRESHOLD_HIGH) {
             x = x < 15 ? x + 1 : 15;
         }
-        if (horz < 300) {
+        if (horz < JOY_THRESHOLD_LOW) {
             x = x > 0 ? x - 1 : 0;
         }
         if (!digitalRead(SEL_PIN)) 
