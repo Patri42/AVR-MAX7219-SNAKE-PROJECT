@@ -28,6 +28,13 @@ extern uint8_t max7219_buffer[MAX7219_BUFFER_SIZE];
 
 //#define MAX_DEVICES	1
 
+void max7219b_clrAll(void)
+{
+    for (uint8_t i = 0; i < MAX7219_BUFFER_SIZE; i++) {
+        max7219_buffer[i] = 0;
+    }
+}
+
 int map(int x, int in_min, int in_max, int out_min, int out_max)
 {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -61,45 +68,35 @@ int main ()
     pinMode(HORZ_PIN, INPUT);
     pinMode(SEL_PIN, INPUT_PULLUP);
 
-    int last_x = 0;
-    int last_y = 0;
+    // int last_x = 0;
+    // int last_y = 0;
 
-    int x = 1023 - readAnalog(HORZ_PIN);
-    int y = 1023 - readAnalog(VERT_PIN);
+    // int x,y;
 
-   while(1) 
+    // int x = 1023 - readAnalog(HORZ_PIN);
+    // int y = 1023 - readAnalog(VERT_PIN);
+
+    while(1) 
     {
-        int raw_x = readAnalog(HORZ_PIN);
-        int raw_y = readAnalog(VERT_PIN);
+        int raw_x = 1023 - readAnalog(HORZ_PIN);
+        int raw_y = 1023 - readAnalog(VERT_PIN);
 
         // Convert the readings to LED matrix positions
-        int x = raw_x / 128;
-        int y = raw_y / 128;
+        int x = map(raw_x, 0, 1023, 0, 7);
+        int y = map(raw_y, 0, 1023, 0, 7);
 
-        // Check if the position has changed significantly
-        if(abs(x - last_x) > 64 || abs(y - last_y) > 64) 
-        {
-            // Update the last known positions
-            last_x = x;
-            last_y = y;
-
-            // Clear the previous LED
-            max7219b_clr(7 - last_y, last_x);  // Clear the previously set pixel
-
-            // Update the LED position
-            y = 7 - map(raw_y, 0, 1023, 0, 7); // Reverse direction so up is up
-            x = map(raw_x, 0, 1023, 0, 7);     // No need to reverse the x-axis
-            max7219b_set(y, x);                // Set the new pixel
-
-            _delay_ms(10); // avoid rapid refresh
-        }
+        max7219b_clrAll();
+        max7219b_set(7-y, x); // Note that we are reversing y because the origin (0,0) is at the top-left corner
+        max7219b_out();
 
         if (!digitalRead(SEL_PIN)) 
         {
-            max7219b_clr(y, x);   // Clear the LED if the joystick is pressed
+            _delay_ms(500); // delay to debounce the button
+            max7219b_clrAll(); // Clear all LEDs if the joystick is pressed
+            max7219b_out();
         }
 
-        max7219b_out();
+        _delay_ms(10); // delay to slow down the refresh rate
     }
 
     return 0;
