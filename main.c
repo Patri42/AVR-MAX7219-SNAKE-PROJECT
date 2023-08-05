@@ -39,9 +39,6 @@
 #define LOW 0
 #define HIGH 1
 
-#define JOY_DEADZONE 20
-#define JOY_MAX 1023
-
 // Define thresholds for joystick readings
 #define JOY_THRESHOLD_LOW 300
 #define JOY_THRESHOLD_HIGH 700
@@ -61,11 +58,6 @@ void max7219b_clrAll(void)
     }
 }
 
-// Function to map values from one range to another
-int map(int x, int in_min, int in_max, int out_min, int out_max)
-{
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 // Function to read analog value from specified pin
 uint16_t readAnalog(uint8_t pin)
@@ -101,18 +93,20 @@ int main () {
     {
         int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
         int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
-        if (vert < JOY_THRESHOLD_LOW) {
-            y = y < 7 ? y + 1 : 7; // Increase y if joystick moves up and within display limit
+
+        if (vert < 300) {
+            y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase y if joystick moves up and within display limit
         }
-        if (vert > JOY_THRESHOLD_HIGH) {
+        if (vert > 700) {
             y = y > 0 ? y - 1 : 0; // Decrease y if joystick moves down and within display limit
         }
-        if (horz > JOY_THRESHOLD_HIGH) {
-            x = x < 15 ? x + 1 : 15; // Increase x if joystick moves right and within display limit
+        if (horz > 700) {
+            x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase x if joystick moves right and within display limit
         }
-        if (horz < JOY_THRESHOLD_LOW) {
+        if (horz < 300) {
             x = x > 0 ? x - 1 : 0; // Decrease x if joystick moves left and within display limit
         }
+      
         if (!digitalRead(SEL_PIN)) 
         {
             max7219b_clrAll(); // Clear the display if the selection button is pressed
