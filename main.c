@@ -40,27 +40,30 @@ int main () {
 
         // Update game based on joystick input
         if (vert < 300) {
-            update_game(&game, UP);
+            update_game(&(game.snake), UP);
         }
         if (vert > 700) {
-            update_game(&game, DOWN);
+            update_game(&(game.snake), DOWN);
         }
         if (horz > 700) {
-            update_game(&game, RIGHT);
+            update_game(&(game.snake), RIGHT);
         }
         if (horz < 300) {
-            update_game(&game, LEFT);
+            update_game(&(game.snake), LEFT);
         }
 
         // Handle game events
-        if (is_food_eaten(&game)) {
-            place_food(&game);
+        if (is_food_eaten(&(game.snake))) {
+            place_food();
+            snake_grow(&(game.snake));
         }
+
+        // Check if game is over
         if (is_game_over(&game)) {
-            
             // Display "Game Over" message or do something else here
             break;
         }
+
 
         // Draw game state
         max7219b_clrAll(); // Clear the display
