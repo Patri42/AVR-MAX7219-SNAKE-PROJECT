@@ -70,7 +70,7 @@ int main () {
 
         // Draw game state
         max7219b_clrAll(); // Clear the display
-        draw_game(&game); // Draw the game state
+        //draw_game(&game); // Draw the game state
         max7219b_out(); // Output the updated buffer to display
 
         _delay_ms(100); // Delay for 100 ms for debouncing

@@ -11,7 +11,7 @@ LDFLAGS=-mmcu=$(MCU)
 PORT=\\\\.\\COM3
 BIN=avrdemo
 OUT=${BIN}.hex
-SOURCES = main.c max72xx.c uart.c joystick.c display.c snakegame.c
+SOURCES = main.c max72xx.c uart.c joystick.c display.c snakegame.c snake.c
 
 DEBUG?=1
 
