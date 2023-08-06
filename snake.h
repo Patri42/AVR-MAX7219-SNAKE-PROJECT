@@ -17,6 +17,12 @@ typedef struct {
     int y;
 } Point;
 
+typedef struct SnakeSegment {
+    int x;
+    int y;
+    struct SnakeSegment* next;
+} SnakeSegment;
+
 // Definition for one segment of the snake
 typedef struct {
     Point position;

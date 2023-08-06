@@ -1,7 +1,11 @@
 #ifndef SNAKEGAME_H
 #define SNAKEGAME_H
 
+#include "stdbool.h"
 #include "snake.h"
+
+#define MAX_X 8
+#define MAX_Y 8
 
 typedef struct {
     Snake* snake;           // The snake object
