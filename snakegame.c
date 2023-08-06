@@ -10,7 +10,7 @@ void place_food() {
     food.y = rand() % (MAX7219_SEG_NUM * 8); // Set food y-coordinate randomly
 }
 
-void game_init() {
+void init_game() {
     place_food(); // Place the food in a random location at game start
 }
 

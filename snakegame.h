@@ -15,10 +15,10 @@ typedef struct {
     bool isGameOver;        // Flag to check if the game is over
 } Game;
 
-typedef struct {
-    int x;
-    int y;
-} Point;
+// typedef struct {
+//     int x;
+//     int y;
+// } Point;
 
 extern Point food;
 

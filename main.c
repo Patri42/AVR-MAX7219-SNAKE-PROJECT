@@ -16,10 +16,13 @@
  * - VCC is connected to Arduino Uno pin 5V
  */
 
+// Setup: https://wokwi.com/projects/296234816685212169
+
 #include "joystick.h"
 #include "display.h"
 #include <util/delay.h>
 #include "snakegame.h"
+#include "snake.h"
 
 int main () {
     init_serial(); // Initialize serial communication
