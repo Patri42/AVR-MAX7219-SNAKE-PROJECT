@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef SNAKEGAME_H
+#define SNAKEGAME_H
 
 #include "snake.h"
 
@@ -23,4 +23,4 @@ void place_food(void);
 bool is_food_eaten(Snake* snake);
 void update_game(Snake* snake);
 
-#endif // GAME_H
+#endif 
