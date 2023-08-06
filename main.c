@@ -29,6 +29,10 @@ int main () {
     max7219_init(); // Initialize max7219 display
     adc_init(); // Initialize ADC for joystick
 
+    
+    // Set a single dot on the matrix to on - TEST
+    max7219b_set(2, 3); 
+    
     pinMode(VERT_PIN, INPUT); // Set vertical joystick pin as input
     pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
     pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
@@ -36,7 +40,7 @@ int main () {
     // Initialize game
     Game game;
     init_game(&game);
-    
+
     while(1) {
         int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
         int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value

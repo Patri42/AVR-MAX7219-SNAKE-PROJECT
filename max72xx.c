@@ -93,7 +93,7 @@ void max7219b_out(void) {
 //         bit_mask >>= 1;
 //     }
 // }
-
+ 
 void max7219b_set(uint8_t x, uint8_t y) {
 
     //x = (MAX7219_BUFFER_SIZE) - x - 9;
