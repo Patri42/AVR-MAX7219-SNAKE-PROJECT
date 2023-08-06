@@ -19,11 +19,9 @@
 #include "joystick.h"
 #include "display.h"
 #include <util/delay.h>
+#include "snakegame.h"
 
 int main () {
-    int x = 0; // Initialize x position
-    int y = 0; // Initialize y position
-
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize max7219 display
     adc_init(); // Initialize ADC for joystick
@@ -32,30 +30,40 @@ int main () {
     pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
     pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
 
-    while(1) 
-    {
+    // Initialize game
+    Game game;
+    init_game(&game);
+    
+    while(1) {
         int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
         int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
 
+        // Update game based on joystick input
         if (vert < 300) {
-            y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase y if joystick moves up and within display limit
+            update_game(&game, UP);
         }
         if (vert > 700) {
-            y = y > 0 ? y - 1 : 0; // Decrease y if joystick moves down and within display limit
+            update_game(&game, DOWN);
         }
         if (horz > 700) {
-            x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase x if joystick moves right and within display limit
+            update_game(&game, RIGHT);
         }
         if (horz < 300) {
-            x = x > 0 ? x - 1 : 0; // Decrease x if joystick moves left and within display limit
+            update_game(&game, LEFT);
         }
-      
-        if (!digitalRead(SEL_PIN)) 
-        {
-            max7219b_clrAll(); // Clear the display if the selection button is pressed
-            max7219b_out(); // Output the cleared buffer to display
+
+        // Handle game events
+        if (is_food_eaten(&game)) {
+            place_food(&game);
         }
-        max7219b_set(y, x); // Set the pixel at current (x, y) location
+        if (is_game_over(&game)) {
+            // Handle game over scenario, like showing end screen
+            // ...
+        }
+
+        // Draw game state
+        max7219b_clrAll(); // Clear the display
+        draw_game(&game); // Draw the game state
         max7219b_out(); // Output the updated buffer to display
 
         _delay_ms(100); // Delay for 100 ms for debouncing

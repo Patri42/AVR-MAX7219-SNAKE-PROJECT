@@ -25,3 +25,22 @@ void update_game(Snake* snake) {
         grow_snake(snake); // Grow the snake when food is eaten
     }
 }
+
+bool is_game_over(Game* game) {
+    // Check if snake hits the boundaries of the screen
+    if (game->snake->head->x < 0 || game->snake->head->x >= MAX7219_SEG_NUM * 8 ||
+        game->snake->head->y < 0 || game->snake->head->y >= MAX7219_SEG_NUM * 8) {
+        return true;
+    }
+
+    // Check if snake hits itself
+    SnakeSegment* current = game->snake->head->next;
+    while (current != NULL) {
+        if (game->snake->head->x == current->x && game->snake->head->y == current->y) {
+            return true;
+        }
+        current = current->next;
+    }
+
+    return false;
+}
