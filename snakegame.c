@@ -2,6 +2,8 @@
 #include "stdbool.h"
 #include "max72xx.h"
 #include "snake.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 Point food;
 

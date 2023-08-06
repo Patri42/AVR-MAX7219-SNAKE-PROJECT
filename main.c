@@ -23,8 +23,13 @@
 #include <util/delay.h>
 #include "snakegame.h"
 #include "snake.h"
+#include "millis.h"
 
 int main () {
+
+    // int x = 0; // Initialize x position
+    // int y = 0; // Initialize y position
+
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize max7219 display
     adc_init(); // Initialize ADC for joystick
@@ -36,6 +41,9 @@ int main () {
     pinMode(VERT_PIN, INPUT); // Set vertical joystick pin as input
     pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
     pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
+
+
+    srand(millis()); // Seed the random number generator
 
     // Initialize game
     Game game;
