@@ -10,8 +10,12 @@ void place_food() {
     food.y = rand() % (MAX7219_SEG_NUM * 8); // Set food y-coordinate randomly
 }
 
-void init_game() {
-    place_food(); // Place the food in a random location at game start
+void init_game(Game* game) {
+    // Initialize the snake
+    snake_init(&(game->snake));
+
+    // Place the food in a random location at game start
+    place_food();
 }
 
 bool is_food_eaten(Snake* snake) {

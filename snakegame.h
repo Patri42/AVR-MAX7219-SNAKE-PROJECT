@@ -22,7 +22,7 @@ typedef struct {
 
 extern Point food;
 
-void game_init(void);
+void init_game(Game* game);
 void place_food(void);
 bool is_food_eaten(Snake* snake);
 void update_game(Snake* snake, Direction new_direction);
