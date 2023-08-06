@@ -57,8 +57,9 @@ int main () {
             place_food(&game);
         }
         if (is_game_over(&game)) {
-            // Handle game over scenario, like showing end screen
-            // ...
+            
+            // Display "Game Over" message or do something else here
+            break;
         }
 
         // Draw game state

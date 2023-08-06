@@ -1,5 +1,7 @@
 #include "snakegame.h"
 #include "stdbool.h"
+#include "max72xx.h"
+#include "snake.h"
 
 Point food;
 
@@ -13,33 +15,37 @@ void game_init() {
 }
 
 bool is_food_eaten(Snake* snake) {
-    if(snake->head->x == food.x && snake->head->y == food.y) {
+    if(snake->segments[0].position.x == food.x && snake->segments[0].position.y == food.y) {
         return true;
     }
     return false;
 }
 
-void update_game(Snake* snake) {
+void update_game(Snake* snake, Direction new_direction) {
+    update_snake_direction(snake, new_direction);
     if(is_food_eaten(snake)) {
         place_food(); // Place the food in a new location when it is eaten
-        grow_snake(snake); // Grow the snake when food is eaten
+        snake_grow(snake); // Grow the snake when food is eaten
     }
+}
+
+void update_snake_direction(Snake* snake, Direction new_direction) {
+    snake_turn(snake, new_direction);
 }
 
 bool is_game_over(Game* game) {
     // Check if snake hits the boundaries of the screen
-    if (game->snake->head->x < 0 || game->snake->head->x >= MAX7219_SEG_NUM * 8 ||
-        game->snake->head->y < 0 || game->snake->head->y >= MAX7219_SEG_NUM * 8) {
+    if (game->snake.segments[0].position.x < 0 || game->snake.segments[0].position.x >= MAX7219_SEG_NUM * 8 ||
+        game->snake.segments[0].position.y < 0 || game->snake.segments[0].position.y >= MAX7219_SEG_NUM * 8) {
         return true;
     }
 
     // Check if snake hits itself
-    SnakeSegment* current = game->snake->head->next;
-    while (current != NULL) {
-        if (game->snake->head->x == current->x && game->snake->head->y == current->y) {
+    for (int i = 1; i < game->snake.length; i++) {
+        if (game->snake.segments[0].position.x == game->snake.segments[i].position.x && 
+            game->snake.segments[0].position.y == game->snake.segments[i].position.y) {
             return true;
         }
-        current = current->next;
     }
 
     return false;

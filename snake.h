@@ -17,9 +17,9 @@ typedef struct {
     int y;
 } Point;
 
+// Structure for a snake segment
 typedef struct SnakeSegment {
-    int x;
-    int y;
+    Point position;
     struct SnakeSegment* next;
 } SnakeSegment;
 
@@ -39,5 +39,6 @@ void snake_init(Snake* snake);
 void snake_move(Snake* snake);
 void snake_turn(Snake* snake, Direction new_direction);
 void snake_grow(Snake* snake);
+void update_snake_direction(Snake* snake, Direction new_direction);
 
 #endif // SNAKE_H
