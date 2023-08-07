@@ -21,12 +21,21 @@
 #include <stdlib.h> 
 #include <util/delay.h>
 
+typedef enum {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+} Direction;
+
 int main () {
     int x = 0; // Initialize x position
     int y = 0; // Initialize y position
 
     int foodX = rand() % (MAX7219_SEG_NUM * 8); // Food x-coordinate
     int foodY = rand() % (MAX7219_SEG_NUM * 8); // Food y-coordinate
+
+    Direction currentDirection = RIGHT;
 
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize max7219 display
@@ -36,26 +45,30 @@ int main () {
     pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
     pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
 
-    max7219b_clrAll(); // Clear the display
+    //max7219b_clrAll(); // Clear the display
 
     while(1) 
     {
-        max7219b_clrAll(); // Clear the display before updating position
+        //max7219b_clrAll(); // Clear the display before updating position
 
         int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
         int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
 
-        if (vert < 300) {
+        if (vert < 300 && currentDirection != DOWN) {
             y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1);
+            
         }
-        if (vert > 700) {
+        if (vert > 700 && currentDirection != UP) {
             y = y > 0 ? y - 1 : 0;
+            currentDirection = DOWN;
         }
-        if (horz > 700) {
+        if (horz > 700 && currentDirection != LEFT) {
             x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1);
+            currentDirection = RIGHT;
         }
-        if (horz < 300) {
+        if (horz < 300 && currentDirection != RIGHT) {
             x = x > 0 ? x - 1 : 0;
+            currentDirection = LEFT;
         }
         if (x == foodX && y == foodY) {
             foodX = rand() % (MAX7219_SEG_NUM * 8);
@@ -68,7 +81,7 @@ int main () {
         max7219b_set(foodY, foodX); // Display the food
         max7219b_out(); // Output the updated buffer to display
 
-        _delay_ms(100); // Delay for 100 ms for smoother movement
+        _delay_ms(50); // Delay for 100 ms for smoother movement
     }
 
     return 0;
