@@ -73,16 +73,6 @@ void snake_move(Snake* snake, int dirX, int dirY) {
 }
 
 // Grow the snake
-// void snake_grow(Snake* snake) {
-//     if(snake->length < MAX_SNAKE_LENGTH) {
-//         snake->segments[snake->length] = snake->segments[snake->length - 1];
-//         snake->length++;
-//         printf("Snake grown to length: %d\n", snake->length);
-//     } else {
-//         printf("Snake at max length\n");
-//     }
-// }
-
 void snake_grow(Snake* snake) {
     if(snake->length < MAX_SNAKE_LENGTH) {
         // Add the new segment at the tail of the snake, without changing its position
@@ -191,7 +181,7 @@ bool is_game_over(Game* game) {
     // Check if the snake hits the boundaries of the screen
     if (game->snake.segments[0].x < 0 || game->snake.segments[0].x >= (MAX7219_SEG_NUM * 8) ||
         game->snake.segments[0].y < 0 || game->snake.segments[0].y >= (MAX7219_SEG_NUM * 8)) {
-        printf("Game over due to boundary collision\n");
+        printf("Game over due to boundary collision\n"); // Debugging print statement
         return true;
     }
 
@@ -199,7 +189,7 @@ bool is_game_over(Game* game) {
     for (int i = 1; i < game->snake.length; i++) {
         if (game->snake.segments[0].x == game->snake.segments[i].x &&
             game->snake.segments[0].y == game->snake.segments[i].y) {
-            printf("Game over due to self collision\n");
+            printf("Game over due to self collision\n"); // Debugging print statement
             return true;
         }
     }
@@ -232,8 +222,8 @@ void game_loop() {
             printf("Food collision detected\n"); // Debugging print statement
             place_food(&game);
             snake_grow(&game.snake);
-            printf("New food position (%d, %d)\n", game.food.x, game.food.y);
-            printf("Snake head position (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y);
+            printf("New food position (%d, %d)\n", game.food.x, game.food.y); // Debugging print statement
+            printf("Snake head position (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
         }
 
         // Render the snake on the display
@@ -242,7 +232,7 @@ void game_loop() {
         // Check for game over condition
         if (is_game_over(&game)) {
             printf("Game over detected\n"); // Debugging print statement
-            printf("Snake head position at game over (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y);
+            printf("Snake head position at game over (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
             // Handle the game over (e.g., display a message, reset the game, etc.)
             break;
         }
