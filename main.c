@@ -125,8 +125,8 @@ Direction read_joystick_direction(Direction current_direction) {
 
     if (vert < 300) return UP;
     if (vert > 700) return DOWN;
-    if (horz > 700) return RIGHT;
-    if (horz < 300) return LEFT;
+    if (horz < 300) return RIGHT;
+    if (horz > 700) return LEFT;
 
     return current_direction; // Keep the current direction if no change
 }
