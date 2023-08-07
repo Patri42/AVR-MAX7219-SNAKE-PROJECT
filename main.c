@@ -73,13 +73,20 @@ void snake_move(Snake* snake, int dirX, int dirY) {
 }
 
 // Grow the snake
+// void snake_grow(Snake* snake) {
+//     if(snake->length < MAX_SNAKE_LENGTH) {
+//         snake->segments[snake->length] = snake->segments[snake->length - 1];
+//         snake->length++;
+//         printf("Snake grown to length: %d\n", snake->length);
+//     } else {
+//         printf("Snake at max length\n");
+//     }
+// }
+
 void snake_grow(Snake* snake) {
     if(snake->length < MAX_SNAKE_LENGTH) {
-        snake->segments[snake->length] = snake->segments[snake->length - 1];
+        // Add the new segment at the tail of the snake, without changing its position
         snake->length++;
-        printf("Snake grown to length: %d\n", snake->length);
-    } else {
-        printf("Snake at max length\n");
     }
 }
 
@@ -166,48 +173,19 @@ void update_snake_direction(Snake* snake, Direction current_direction) {
 }
 
 void place_food(Game* game) {
+    bool collision;
     do {
+        collision = false;
         game->food.x = rand() % (MAX7219_SEG_NUM * 8);
         game->food.y = rand() % (MAX7219_SEG_NUM * 8);
-    } while (check_food_collision(&game->snake, game->food.x, game->food.y)); // Avoid placing food on the snake
+        for(int i = 0; i < game->snake.length; i++) {
+            if(game->snake.segments[i].x == game->food.x && game->snake.segments[i].y == game->food.y) {
+                collision = true;
+                break;
+            }
+        }
+    } while (collision); // Repeat if food is placed on top of the snake
 }
-
-// void place_food(Game* game) {
-//     int emptySpaces = 0;
-//     int emptyCoords[MAX7219_SEG_NUM * 8 * MAX7219_SEG_NUM * 8][2];
-
-//     // Loop through every spot on the grid
-//     for(int x = 0; x < (MAX7219_SEG_NUM * 8); x++) {
-//         for(int y = 0; y < (MAX7219_SEG_NUM * 8); y++) {
-//             bool isOccupied = false;
-
-//             // Check if it's occupied by the snake
-//             for(int i = 0; i < game->snake.length; i++) {
-//                 if(game->snake.segments[i].x == x && game->snake.segments[i].y == y) {
-//                     isOccupied = true;
-//                     break;
-//                 }
-//             }
-
-//             if(!isOccupied) {
-//                 emptyCoords[emptySpaces][0] = x;
-//                 emptyCoords[emptySpaces][1] = y;
-//                 emptySpaces++;
-//             }
-//         }
-//     }
-
-//     // If there's no empty space, the game is over
-//     if(emptySpaces == 0) {
-//         game->isGameOver = true;
-//         return;
-//     }
-
-//     // Pick a random empty space and place the food there
-//     int randomIndex = rand() % emptySpaces;
-//     game->food.x = emptyCoords[randomIndex][0];
-//     game->food.y = emptyCoords[randomIndex][1];
-// }
 
 bool is_game_over(Game* game) {
     // Check if the snake hits the boundaries of the screen
@@ -275,11 +253,11 @@ void game_loop() {
 }
 
 int main(void) {
+    srand(time(NULL));
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
     adc_init(); // Initialize ADC for joystick
 
-    srand(time(NULL));
 
     game_loop();     // Start the game loop
     return 0;        // Return code
