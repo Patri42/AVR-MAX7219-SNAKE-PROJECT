@@ -47,29 +47,40 @@ int main () {
 
     //max7219b_clrAll(); // Clear the display
 
-    while(1) 
-    {
-        //max7219b_clrAll(); // Clear the display before updating position
+        while(1) {
+        int horz = 1023 - readAnalog(HORZ_PIN);
+        int vert = 1023 - readAnalog(VERT_PIN);
 
-        int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
-        int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
-
+        // Determine the new direction
         if (vert < 300 && currentDirection != DOWN) {
-            y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1);
-            
+            currentDirection = UP;
         }
         if (vert > 700 && currentDirection != UP) {
-            y = y > 0 ? y - 1 : 0;
             currentDirection = DOWN;
         }
         if (horz > 700 && currentDirection != LEFT) {
-            x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1);
             currentDirection = RIGHT;
         }
         if (horz < 300 && currentDirection != RIGHT) {
-            x = x > 0 ? x - 1 : 0;
             currentDirection = LEFT;
         }
+
+        // Move in the current direction
+        switch (currentDirection) {
+            case UP:
+                y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1);
+                break;
+            case DOWN:
+                y = y > 0 ? y - 1 : 0;
+                break;
+            case RIGHT:
+                x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1);
+                break;
+            case LEFT:
+                x = x > 0 ? x - 1 : 0;
+                break;
+        }
+
         if (x == foodX && y == foodY) {
             foodX = rand() % (MAX7219_SEG_NUM * 8);
             foodY = rand() % (MAX7219_SEG_NUM * 8);
@@ -81,7 +92,7 @@ int main () {
         max7219b_set(foodY, foodX); // Display the food
         max7219b_out(); // Output the updated buffer to display
 
-        _delay_ms(50); // Delay for 100 ms for smoother movement
+        _delay_ms(300); // Delay for 100 ms for smoother movement (Speed of the worm)
     }
 
     return 0;
