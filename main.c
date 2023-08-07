@@ -30,35 +30,33 @@ int main () {
 
     pinMode(VERT_PIN, INPUT); // Set vertical joystick pin as input
     pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
-    pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
+
+    max7219b_clrAll(); // Clear the display
 
     while(1) 
     {
+        max7219b_clrAll(); // Clear the display before updating position
+
         int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
         int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
 
         if (vert < 300) {
-            y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase y if joystick moves up and within display limit
+            y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1);
         }
         if (vert > 700) {
-            y = y > 0 ? y - 1 : 0; // Decrease y if joystick moves down and within display limit
+            y = y > 0 ? y - 1 : 0;
         }
         if (horz > 700) {
-            x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase x if joystick moves right and within display limit
+            x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1);
         }
         if (horz < 300) {
-            x = x > 0 ? x - 1 : 0; // Decrease x if joystick moves left and within display limit
+            x = x > 0 ? x - 1 : 0;
         }
-      
-        if (!digitalRead(SEL_PIN)) 
-        {
-            max7219b_clrAll(); // Clear the display if the selection button is pressed
-            max7219b_out(); // Output the cleared buffer to display
-        }
+
         max7219b_set(y, x); // Set the pixel at current (x, y) location
         max7219b_out(); // Output the updated buffer to display
 
-        _delay_ms(100); // Delay for 100 ms for debouncing
+        _delay_ms(50); // Delay for 50 ms for smoother movement
     }
 
     return 0;
