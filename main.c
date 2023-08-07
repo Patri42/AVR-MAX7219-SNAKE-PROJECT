@@ -18,11 +18,15 @@
 
 #include "joystick.h"
 #include "display.h"
+#include <stdlib.h> 
 #include <util/delay.h>
 
 int main () {
     int x = 0; // Initialize x position
     int y = 0; // Initialize y position
+
+    int foodX = rand() % (MAX7219_SEG_NUM * 8); // Food x-coordinate
+    int foodY = rand() % (MAX7219_SEG_NUM * 8); // Food y-coordinate
 
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize max7219 display
@@ -30,6 +34,7 @@ int main () {
 
     pinMode(VERT_PIN, INPUT); // Set vertical joystick pin as input
     pinMode(HORZ_PIN, INPUT); // Set horizontal joystick pin as input
+    pinMode(SEL_PIN, INPUT_PULLUP); // Set selection button pin as input with pull-up
 
     max7219b_clrAll(); // Clear the display
 
@@ -52,11 +57,18 @@ int main () {
         if (horz < 300) {
             x = x > 0 ? x - 1 : 0;
         }
+        if (x == foodX && y == foodY) {
+            foodX = rand() % (MAX7219_SEG_NUM * 8);
+            foodY = rand() % (MAX7219_SEG_NUM * 8);
+        }
 
+
+        max7219b_clrAll(); // Clear the display
         max7219b_set(y, x); // Set the pixel at current (x, y) location
+        max7219b_set(foodY, foodX); // Display the food
         max7219b_out(); // Output the updated buffer to display
 
-        _delay_ms(50); // Delay for 50 ms for smoother movement
+        _delay_ms(100); // Delay for 100 ms for smoother movement
     }
 
     return 0;
