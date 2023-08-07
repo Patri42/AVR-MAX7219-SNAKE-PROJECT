@@ -248,7 +248,7 @@ void game_loop() {
         }
 
         // Delay to control the speed of the game
-        _delay_ms(500);
+        _delay_ms(200);
     }
 }
 
@@ -257,7 +257,6 @@ int main(void) {
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
     adc_init(); // Initialize ADC for joystick
-
 
     game_loop();     // Start the game loop
     return 0;        // Return code
