@@ -4,6 +4,7 @@
 #include "joystick.h"
 #include "millis.h"
 #include "debug.h"
+#include <util/delay.h>
 
 // Initialize the snake
 void snake_init(Snake* snake) {
@@ -184,7 +185,14 @@ void game_loop() {
                 DEBUG_PRINT("Game over detected\n"); // Debugging print statement
                 DEBUG_PRINT("Snake head position at game over (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
                 // Handle the game over (e.g., display a message, reset the game, etc.)
-                break;
+
+                _delay_ms(3000); // Wait for 3 seconds
+
+                init_game(&game); // Re-initialize the game to start over
+                current_direction = RIGHT; // Reset the initial direction or any other states if necessary
+                lastUpdateTime = millis_get(); // Reset the update time
+                
+                //break;
             }
 
             // Record the time of this update
