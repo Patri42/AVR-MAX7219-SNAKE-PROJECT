@@ -22,6 +22,7 @@
 #include <util/delay.h>
 #include <stdbool.h>
 #include <time.h>
+#include "millis.h"
 
 #define MAX_SNAKE_LENGTH 100
 
@@ -198,47 +199,65 @@ bool is_game_over(Game* game) {
 }
 
 void game_loop() {
+    // Initialize the millisecond tracking
+    millis_init();
+    printf("Millis init\n");
+
+
     // Initialize the game state
     Game game;
     init_game(&game);
+    printf("Game init\n");
 
     // Initial direction
     Direction current_direction = RIGHT;
 
+    // Set up time tracking
+    millis_t lastUpdateTime = millis_get();
+    const millis_t updateInterval = 200; // Update every 200 milliseconds
+    printf("Millis setup\n");
+
     while (true) {
-        // Read the input from the joystick (or other input method)
-        Direction new_direction = read_joystick_direction(current_direction);
+        // Check the time since the last update
+        millis_t currentTime = millis_get();
+        if (currentTime - lastUpdateTime >= updateInterval) {
+            // Read the input from the joystick (or other input method)
+            Direction new_direction = read_joystick_direction(current_direction);
 
-        // Update the direction if it's not opposite to the current one
-        if (!is_opposite_direction(current_direction, new_direction)) {
-            current_direction = new_direction;
+            // Update the direction if it's not opposite to the current one
+            if (!is_opposite_direction(current_direction, new_direction)) {
+                current_direction = new_direction;
+            }
+
+            // Move the snake in the current direction
+            update_snake_direction(&game.snake, current_direction);
+
+            // Check for food collision and grow the snake if necessary
+            if (check_food_collision(&game.snake, game.food.x, game.food.y)) {
+                printf("Food collision detected\n"); // Debugging print statement
+                place_food(&game);
+                snake_grow(&game.snake);
+                printf("New food position (%d, %d)\n", game.food.x, game.food.y); // Debugging print statement
+                printf("Snake head position (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
+            }
+
+            // Render the snake on the display
+            render_game(&game);
+
+            // Check for game over condition
+            if (is_game_over(&game)) {
+                printf("Game over detected\n"); // Debugging print statement
+                printf("Snake head position at game over (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
+                // Handle the game over (e.g., display a message, reset the game, etc.)
+                break;
+            }
+
+            // Record the time of this update
+            lastUpdateTime = currentTime;
         }
 
-        // Move the snake in the current direction
-        update_snake_direction(&game.snake, current_direction);
-
-        // Check for food collision and grow the snake if necessary
-        if (check_food_collision(&game.snake, game.food.x, game.food.y)) {
-            printf("Food collision detected\n"); // Debugging print statement
-            place_food(&game);
-            snake_grow(&game.snake);
-            printf("New food position (%d, %d)\n", game.food.x, game.food.y); // Debugging print statement
-            printf("Snake head position (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
-        }
-
-        // Render the snake on the display
-        render_game(&game);
-
-        // Check for game over condition
-        if (is_game_over(&game)) {
-            printf("Game over detected\n"); // Debugging print statement
-            printf("Snake head position at game over (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
-            // Handle the game over (e.g., display a message, reset the game, etc.)
-            break;
-        }
-
-        // Delay to control the speed of the game
-        _delay_ms(200);
+        // You can add any other non-blocking tasks here if necessary
+        // ...
     }
 }
 
