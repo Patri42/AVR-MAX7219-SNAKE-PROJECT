@@ -92,23 +92,6 @@ bool check_food_collision(Snake* snake, int foodX, int foodY) {
     return snake->segments[0].x == foodX && snake->segments[0].y == foodY;
 }
 
-void render_snake(Snake* snake) {
-    // Clear the previous frame
-    max7219b_clrAll();
-
-    // Set the pixels for the snake's segments
-    for(int i = 0; i < snake->length; i++) {
-        int x = snake->segments[i].x;
-        int y = snake->segments[i].y;
-
-        printf("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
-
-        max7219b_set(y, x);
-    }
-
-    // Output the updated buffer to display
-    max7219b_out();
-}
 
 void render_game(Game* game) {
     // Clear the previous frame
@@ -118,6 +101,7 @@ void render_game(Game* game) {
     for(int i = 0; i < game->snake.length; i++) {
         int x = game->snake.segments[i].x;
         int y = game->snake.segments[i].y;
+        printf("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
         max7219b_set(y, x);
     }
 
@@ -231,7 +215,7 @@ void game_loop() {
     while (true) {
         // Check the time since the last update
         millis_t currentTime = millis_get();
-        printf("Current time: %lu\n", currentTime);
+        //printf("Current time: %lu\n", currentTime);
         if (currentTime - lastUpdateTime >= updateInterval) {
             // Read the input from the joystick (or other input method)
             Direction new_direction = read_joystick_direction(current_direction);
