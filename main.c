@@ -16,6 +16,9 @@
  * - VCC is connected to Arduino Uno pin 5V
  */
 
+// Wokwi:
+// https://wokwi.com/projects/296234816685212169
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include "joystick.h"
