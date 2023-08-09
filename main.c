@@ -39,6 +39,7 @@ typedef struct {
 typedef struct {
     Segment segments[MAX_SNAKE_LENGTH];
     int length;
+    bool hasGrown;
 } Snake;
 
 
@@ -62,28 +63,38 @@ typedef struct {
 // Initialize the snake
 void snake_init(Snake* snake) {
     snake->length = 1;
-    for(int i = 0; i < snake->length; i++) {
-        snake->segments[i].x = 1 - i; // Starting position
-        snake->segments[i].y = 1;
+    for(int i = 0; i < MAX_SNAKE_LENGTH; i++) {
+        snake->segments[i].x = (i == 0) ? 1 : -1; // Only the head is given a valid position
+        snake->segments[i].y = (i == 0) ? 1 : -1;
     }
 }
 
 // Move the snake
 void snake_move(Snake* snake, int dirX, int dirY) {
+    // Save the tail segment's position
+    Segment tail = snake->segments[snake->length - 1];
+    
     // Move the tail
     for(int i = snake->length - 1; i > 0; i--) {
         snake->segments[i] = snake->segments[i - 1];
     }
+
     // Move the head
     snake->segments[0].x += dirX;
     snake->segments[0].y += dirY;
+
+    // If the snake has grown, put the saved tail segment back at the end
+    if (snake->hasGrown) {
+        snake->segments[snake->length - 1] = tail;
+        snake->hasGrown = false; // Reset the growth flag
+    }
 }
 
 // Grow the snake
 void snake_grow(Snake* snake) {
     if(snake->length < MAX_SNAKE_LENGTH) {
-        // Add the new segment at the tail of the snake, without changing its position
         snake->length++;
+        snake->hasGrown = true; // Set a flag indicating that the snake has grown
     }
 }
 
@@ -101,13 +112,16 @@ void render_game(Game* game) {
     for(int i = 0; i < game->snake.length; i++) {
         int x = game->snake.segments[i].x;
         int y = game->snake.segments[i].y;
-        printf("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
-        max7219b_set(y, x);
+        if (x >= 0 && y >= 0) { // Only render if coordinates are valid
+            printf("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
+            max7219b_set(y, x);
+        }
     }
 
     // Render the food
     int foodX = game->food.x;
     int foodY = game->food.y;
+    printf("Rendering food segment at (%d, %d)\n", foodX, foodY); // Debug Print 
     max7219b_set(foodY, foodX);
 
     // Output the updated buffer to display
