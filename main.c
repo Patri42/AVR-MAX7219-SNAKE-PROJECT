@@ -32,6 +32,9 @@
 
 #define MAX_SNAKE_LENGTH 100
 
+#define JOYSTICK_THRESHOLD_LOW 300
+#define JOYSTICK_THRESHOLD_HIGH 700
+
 typedef struct {
     int x, y;
 } Segment;
@@ -132,10 +135,10 @@ Direction read_joystick_direction(Direction current_direction) {
     int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
     int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
 
-    if (vert < 300) return UP;
-    if (vert > 700) return DOWN;
-    if (horz < 300) return RIGHT;
-    if (horz > 700) return LEFT;
+    if (vert < JOYSTICK_THRESHOLD_LOW) return UP;
+    if (vert > JOYSTICK_THRESHOLD_HIGH) return DOWN;
+    if (horz < JOYSTICK_THRESHOLD_LOW) return RIGHT;
+    if (horz > JOYSTICK_THRESHOLD_HIGH) return LEFT;
 
     return current_direction; // Keep the current direction if no change
 }
