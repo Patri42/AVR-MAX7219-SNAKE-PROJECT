@@ -8,6 +8,10 @@
 // Initialize the snake
 void snake_init(Snake* snake) {
     snake->length = 1;
+    //Randomize the starting position of the head within the game's boundaries
+    snake->segments[0].x = rand() % (MAX7219_SEG_NUM * 8);
+    snake->segments[0].y = rand() % (MAX7219_SEG_NUM * 8);
+
     for(int i = 0; i < MAX_SNAKE_LENGTH; i++) {
         snake->segments[i].x = (i == 0) ? 1 : -1; // Only the head is given a valid position
         snake->segments[i].y = (i == 0) ? 1 : -1;
