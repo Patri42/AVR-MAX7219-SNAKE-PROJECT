@@ -19,8 +19,8 @@
 #define HIGH 1
 
 // Define thresholds for joystick readings
-#define JOY_THRESHOLD_LOW 300
-#define JOY_THRESHOLD_HIGH 700
+#define JOYSTICK_THRESHOLD_LOW 300
+#define JOYSTICK_THRESHOLD_HIGH 700
 
 // Define prescaler division for ADC 
 #define ADC_PRESCALER_DIVISION (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) // ADC prescaler division=128 (16Mhz/128=125Khz)

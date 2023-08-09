@@ -32,9 +32,6 @@
 
 #define MAX_SNAKE_LENGTH 100
 
-#define JOYSTICK_THRESHOLD_LOW 300
-#define JOYSTICK_THRESHOLD_HIGH 700
-
 typedef struct {
     int x, y;
 } Segment;
