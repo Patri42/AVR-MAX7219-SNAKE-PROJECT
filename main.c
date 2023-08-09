@@ -16,6 +16,8 @@
  * - VCC is connected to Arduino Uno pin 5V
  */
 
+#include <avr/interrupt.h>
+#include <avr/io.h>
 #include "joystick.h"
 #include "display.h"
 #include <stdlib.h> 
@@ -23,6 +25,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "millis.h"
+#include "uart.h"
 
 #define MAX_SNAKE_LENGTH 100
 
@@ -94,6 +97,9 @@ void render_snake(Snake* snake) {
     for(int i = 0; i < snake->length; i++) {
         int x = snake->segments[i].x;
         int y = snake->segments[i].y;
+
+        printf("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
+
         max7219b_set(y, x);
     }
 
@@ -148,6 +154,7 @@ Direction current_direction = RIGHT; // Start with a right direction
 void init_game(Game* game) {
     snake_init(&(game->snake)); // Initialize the snake
     place_food(game); // Place the food in a random location at game start
+    printf("Init food placement\n");
     game->isGameOver = false; // Set game over flag to false
 }
 
@@ -201,6 +208,7 @@ bool is_game_over(Game* game) {
 void game_loop() {
     // Initialize the millisecond tracking
     millis_init();
+    //sei();
     printf("Millis init\n");
 
 
@@ -214,12 +222,13 @@ void game_loop() {
 
     // Set up time tracking
     millis_t lastUpdateTime = millis_get();
-    const millis_t updateInterval = 200; // Update every 200 milliseconds
+    const millis_t updateInterval = 500; // Update every 500 milliseconds
     printf("Millis setup\n");
 
     while (true) {
         // Check the time since the last update
         millis_t currentTime = millis_get();
+        printf("Current time: %lu\n", currentTime);
         if (currentTime - lastUpdateTime >= updateInterval) {
             // Read the input from the joystick (or other input method)
             Direction new_direction = read_joystick_direction(current_direction);
@@ -236,6 +245,7 @@ void game_loop() {
             if (check_food_collision(&game.snake, game.food.x, game.food.y)) {
                 printf("Food collision detected\n"); // Debugging print statement
                 place_food(&game);
+                printf("New food init\n");
                 snake_grow(&game.snake);
                 printf("New food position (%d, %d)\n", game.food.x, game.food.y); // Debugging print statement
                 printf("Snake head position (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
@@ -266,6 +276,9 @@ int main(void) {
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
     adc_init(); // Initialize ADC for joystick
+
+    millis_init(); // Initialize millis
+    sei(); // Enable global interrupts
 
     game_loop();     // Start the game loop
     return 0;        // Return code
