@@ -185,8 +185,12 @@ void game_loop() {
                 DEBUG_PRINT("Game over detected\n"); // Debugging print statement
                 DEBUG_PRINT("Snake head position at game over (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
                 // Handle the game over (e.g., display a message, reset the game, etc.)
+                // Handle the game over (display the "GAME" message)
+                render_game_over_message();
 
-                _delay_ms(3000); // Wait for 3 seconds
+                wait_for_select_button();
+
+                //_delay_ms(3000); // Wait for 3 seconds
 
                 init_game(&game); // Re-initialize the game to start over
                 current_direction = RIGHT; // Reset the initial direction or any other states if necessary

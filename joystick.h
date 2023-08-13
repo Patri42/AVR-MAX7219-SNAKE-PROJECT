@@ -27,5 +27,6 @@
 
 void joystick_init(void);
 uint16_t readAnalog(uint8_t pin);
+void wait_for_select_button(void);
 
 #endif 

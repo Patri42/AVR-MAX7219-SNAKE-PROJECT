@@ -1,4 +1,5 @@
 #include "joystick.h"
+#include "millis.h"
 
 void joystick_init(void) {
     pinMode(VERT_PIN, INPUT);
@@ -23,3 +24,29 @@ void adc_init()
     ADCSRA = (1 << ADEN) | ADC_PRESCALER_DIVISION; // ADC enabled, prescaler division=128 (16Mhz/128=125Khz)
 }
 
+void wait_for_select_button() {
+    // Initial time stamp when the function is entered
+    millis_t startTime = millis_get();
+
+    // Debounce time in milliseconds
+    const millis_t debounceTime = 10;
+
+    // Wait until the button is pressed
+    while(digitalRead(SEL_PIN) == HIGH) {
+        // Check if debounce time has passed
+        if (millis_get() - startTime >= debounceTime) {
+            startTime = millis_get();  // Update the start time
+        }
+    }
+
+    // Update the start time for button release
+    startTime = millis_get();
+
+    // Optional: wait for button release to avoid repeated action on single press
+    while(digitalRead(SEL_PIN) == LOW) {
+        // Check if debounce time has passed
+        if (millis_get() - startTime >= debounceTime) {
+            startTime = millis_get();  // Update the start time
+        }
+    }
+}

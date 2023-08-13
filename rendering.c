@@ -1,15 +1,27 @@
+#include <stdio.h>
 #include "rendering.h"
 #include "display.h"
 #include "debug.h"
+#include "millis.h"
 
-#define LETTER_WIDTH 8
 
 // Define bitmaps for the letters 'G', 'A', 'M', 'E'
 // These are 8x8 representations of the letters
-const uint8_t LETTER_G[8] = {0x3C, 0x42, 0x42, 0x42, 0x32, 0x02, 0x3C, 0x00};
-const uint8_t LETTER_A[8] = {0x18, 0x24, 0x42, 0x7E, 0x42, 0x42, 0x42, 0x00};
-const uint8_t LETTER_M[8] = {0x42, 0x66, 0x5A, 0x42, 0x42, 0x42, 0x42, 0x00};
-const uint8_t LETTER_E[8] = {0x7E, 0x02, 0x02, 0x3E, 0x02, 0x02, 0x7E, 0x00};
+const uint8_t LETTER_G[MAX7219_BUFFER_SIZE] = {0x3C, 0x42, 0x42, 0x42, 0x32, 0x02, 0x3C, 0x00};
+const uint8_t LETTER_A[MAX7219_BUFFER_SIZE] = {0x18, 0x24, 0x42, 0x7E, 0x42, 0x42, 0x42, 0x00};
+const uint8_t LETTER_M[MAX7219_BUFFER_SIZE] = {0x42, 0x66, 0x5A, 0x42, 0x42, 0x42, 0x42, 0x00};
+const uint8_t LETTER_E[MAX7219_BUFFER_SIZE] = {0x7E, 0x02, 0x02, 0x3E, 0x02, 0x02, 0x7E, 0x00};
+
+// uint8_t letter_G[MATRIX_WIDTH] = {
+//     0b00111100,
+//     0b01000000,
+//     0b01000110,
+//     0b01000110,
+//     0b01000010,
+//     0b01000010,
+//     0b00111100,
+//     0b00000000
+// };
 
 // Function to render a single 8x8 character at a given position
 void render_character(const uint8_t* character, int position) {
@@ -28,22 +40,28 @@ void render_game_over_message() {
     int startPosition = MAX7219_BUFFER_SIZE; // Adjust this based on your display's size
 
     // Slide the "GAME" message from right to left
-    for (int position = startPosition; position > -LETTER_WIDTH * 4; position--) {
+    for (int position = startPosition; position > -MAX7219_BUFFER_SIZE * 4; position--) {
         // Clear the previous frame
         max7219b_clrAll();
 
         // Render each letter at the current position
         render_character(LETTER_G, position);
-        render_character(LETTER_A, position + LETTER_WIDTH);
-        render_character(LETTER_M, position + LETTER_WIDTH * 2);
-        render_character(LETTER_E, position + LETTER_WIDTH * 3);
+        render_character(LETTER_A, position + MAX7219_BUFFER_SIZE);
+        render_character(LETTER_M, position + MAX7219_BUFFER_SIZE * 2);
+        render_character(LETTER_E, position + MAX7219_BUFFER_SIZE * 3);
 
         // Output the updated buffer to display
         max7219b_out();
 
-        // Delay for a short time to create the sliding effect
-        _delay_ms(100);
-    }
+        // Non-blocking delay using millis()
+        while(true) {
+            currentMillis = millis_get();
+            if(currentMillis - previousMillis >= 100) { // Check if 100ms has passed
+                previousMillis = currentMillis; // Reset the previous time
+                break;
+			}
+    	}
+	}
 }
 
 void render_game(Game* game) {

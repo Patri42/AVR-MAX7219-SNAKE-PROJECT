@@ -33,6 +33,7 @@
 #include "game_logic.h"
 
 int main(void) {
+    
     srand(time(NULL));
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
@@ -40,6 +41,10 @@ int main(void) {
 
     millis_init(); // Initialize millis
     sei(); // Enable global interrupts
+
+    render_game_over_message();
+
+    wait_for_select_button();
 
     game_loop();     // Start the game loop
     return 0;        // Return code
