@@ -12,17 +12,6 @@ const uint8_t LETTER_A[MAX7219_BUFFER_SIZE] = {0x18, 0x24, 0x42, 0x7E, 0x42, 0x4
 const uint8_t LETTER_M[MAX7219_BUFFER_SIZE] = {0x42, 0x66, 0x5A, 0x42, 0x42, 0x42, 0x42, 0x00};
 const uint8_t LETTER_E[MAX7219_BUFFER_SIZE] = {0x7E, 0x40, 0x40, 0x7C, 0x40, 0x40, 0x7E, 0x00};
 
-// uint8_t letter_G[MATRIX_WIDTH] = {
-//     0b00111100,
-//     0b01000000,
-//     0b01000110,
-//     0b01000110,
-//     0b01000010,
-//     0b01000010,
-//     0b00111100,
-//     0b00000000
-// };
-
 // Function to render a single 8x8 character at a given position
 void render_character(const uint8_t* character, int position) {
     for (int row = 0; row < 8; row++) {
