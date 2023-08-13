@@ -7,10 +7,10 @@
 
 // Define bitmaps for the letters 'G', 'A', 'M', 'E'
 // These are 8x8 representations of the letters
-const uint8_t LETTER_G[MAX7219_BUFFER_SIZE] = {0x3C, 0x42, 0x42, 0x42, 0x32, 0x02, 0x3C, 0x00};
+const uint8_t LETTER_G[MAX7219_BUFFER_SIZE] = {0x78, 0x40, 0x40, 0x4C, 0x44, 0x44, 0x78, 0x00};
 const uint8_t LETTER_A[MAX7219_BUFFER_SIZE] = {0x18, 0x24, 0x42, 0x7E, 0x42, 0x42, 0x42, 0x00};
 const uint8_t LETTER_M[MAX7219_BUFFER_SIZE] = {0x42, 0x66, 0x5A, 0x42, 0x42, 0x42, 0x42, 0x00};
-const uint8_t LETTER_E[MAX7219_BUFFER_SIZE] = {0x7E, 0x02, 0x02, 0x3E, 0x02, 0x02, 0x7E, 0x00};
+const uint8_t LETTER_E[MAX7219_BUFFER_SIZE] = {0x7E, 0x40, 0x40, 0x7C, 0x40, 0x40, 0x7E, 0x00};
 
 // uint8_t letter_G[MATRIX_WIDTH] = {
 //     0b00111100,
@@ -27,9 +27,8 @@ const uint8_t LETTER_E[MAX7219_BUFFER_SIZE] = {0x7E, 0x02, 0x02, 0x3E, 0x02, 0x0
 void render_character(const uint8_t* character, int position) {
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
-            if (character[row] & (1 << col)) {
+            if ((character[row] & (1 << col)) && (col + position >= 0) && (col + position < 8 * MAX7219_BUFFER_SIZE)) {
                 // Set the pixel at the current position
-                // You'll need to adapt this line to match your rendering code
                 max7219b_set(row, col + position);
             }
         }
@@ -39,16 +38,19 @@ void render_character(const uint8_t* character, int position) {
 void render_game_over_message() {
     int startPosition = MAX7219_BUFFER_SIZE; // Adjust this based on your display's size
 
+	millis_t previousMillis = millis_get();
+    millis_t currentMillis = 0; // initialize it with some value
+
     // Slide the "GAME" message from right to left
-    for (int position = startPosition; position > -MAX7219_BUFFER_SIZE * 4; position--) {
+    for (int position = -MAX7219_BUFFER_SIZE * 4; position < startPosition; position++) {
         // Clear the previous frame
         max7219b_clrAll();
 
         // Render each letter at the current position
-        render_character(LETTER_G, position);
-        render_character(LETTER_A, position + MAX7219_BUFFER_SIZE);
-        render_character(LETTER_M, position + MAX7219_BUFFER_SIZE * 2);
-        render_character(LETTER_E, position + MAX7219_BUFFER_SIZE * 3);
+        render_character(LETTER_E, position);
+        render_character(LETTER_M, position + MAX7219_BUFFER_SIZE);
+        render_character(LETTER_A, position + MAX7219_BUFFER_SIZE * 2);
+        render_character(LETTER_G, position + MAX7219_BUFFER_SIZE * 3);
 
         // Output the updated buffer to display
         max7219b_out();
