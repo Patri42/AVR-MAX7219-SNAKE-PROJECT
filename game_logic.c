@@ -170,9 +170,11 @@ void game_loop() {
             // Check for food collision and grow the snake if necessary
             if (check_food_collision(&game.snake, game.food.x, game.food.y)) {
                 DEBUG_PRINT("Food collision detected\n"); // Debugging print statement
+                snake_grow(&game.snake);  // <-- Move snake_grow() here
+                update_snake_direction(&game.snake, current_direction); 
                 place_food(&game);
                 DEBUG_PRINT("New food init\n");
-                snake_grow(&game.snake);
+                // snake_grow(&game.snake);
                 DEBUG_PRINT("New food position (%d, %d)\n", game.food.x, game.food.y); // Debugging print statement
                 DEBUG_PRINT("Snake head position (%d, %d)\n", game.snake.segments[0].x, game.snake.segments[0].y); // Debugging print statement
             }
