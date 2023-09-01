@@ -19,4 +19,4 @@ void shift_message_left();
 // Declare the function to render the game over message
 void render_game_over_message();
 
-#endif // RENDERING_H
+#endif 

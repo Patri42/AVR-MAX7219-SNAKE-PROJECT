@@ -14,7 +14,7 @@
 #define MAX7219_DIN_HI()    PORTB |= (1 << MAX7219_DIN)
 #define MAX7219_DIN_LO()    PORTB &= ~(1 << MAX7219_DIN)
 
-#define MAX7219_SEG_NUM 1 // The number of the segments.
+#define MAX7219_SEG_NUM 2 // The number of the segments.
 #define MAX7219_BUFFER_SIZE MAX7219_SEG_NUM * 8 // The size of the buffer
 
 
