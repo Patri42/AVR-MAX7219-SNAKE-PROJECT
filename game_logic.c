@@ -12,6 +12,7 @@ void snake_init(Snake* snake) {
     //Randomize the starting position of the head within the game's boundaries
     snake->segments[0].x = rand() % (MAX7219_SEG_NUM * 8);
     snake->segments[0].y = rand() % (MAX7219_SEG_NUM * 8);
+    
 
     for(int i = 0; i < MAX_SNAKE_LENGTH; i++) {
         snake->segments[i].x = (i == 0) ? 1 : -1; // Only the head is given a valid position
@@ -57,10 +58,10 @@ Direction read_joystick_direction(Direction current_direction) {
     int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
     int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
 
-    if (vert < JOYSTICK_THRESHOLD_LOW) return UP;
-    if (vert > JOYSTICK_THRESHOLD_HIGH) return DOWN;
-    if (horz < JOYSTICK_THRESHOLD_LOW) return RIGHT;
-    if (horz > JOYSTICK_THRESHOLD_HIGH) return LEFT;
+    if (vert < JOYSTICK_THRESHOLD_LOW) return LEFT;
+    if (vert > JOYSTICK_THRESHOLD_HIGH) return RIGHT;
+    if (horz < JOYSTICK_THRESHOLD_LOW) return UP;
+    if (horz > JOYSTICK_THRESHOLD_HIGH) return DOWN;
 
     return current_direction; // Keep the current direction if no change
 }
@@ -76,6 +77,23 @@ bool is_opposite_direction(Direction current, Direction new_direction) {
 int x = 0; // Initialize x position
 int y = 0; // Initialize y position
 Direction current_direction = RIGHT; // Start with a right direction
+
+void place_food(Game* game) {
+    DEBUG_PRINT("Placing food\n"); // Debugging
+    bool collision;
+    do {
+        collision = false;
+        game->food.x = rand() % (MAX7219_SEG_NUM * 8);
+        game->food.y = rand() % 8;
+        for(int i = 0; i < game->snake.length; i++) {
+            if(game->snake.segments[i].x == game->food.x && game->snake.segments[i].y == game->food.y) {
+                collision = true;
+                break;
+            }
+        }
+    } while (collision); // Repeat if food is placed on top of the snake
+    DEBUG_PRINT("New food position (%d, %d)\n", game->food.x, game->food.y); // Debugging
+}
 
 void init_game(Game* game) {
     snake_init(&(game->snake)); // Initialize the snake
@@ -96,24 +114,16 @@ void update_snake_direction(Snake* snake, Direction current_direction) {
     snake_move(snake, dirX, dirY);
 }
 
-void place_food(Game* game) {
-    bool collision;
-    do {
-        collision = false;
-        game->food.x = rand() % (MAX7219_SEG_NUM * 8);
-        game->food.y = rand() % (MAX7219_SEG_NUM * 8);
-        for(int i = 0; i < game->snake.length; i++) {
-            if(game->snake.segments[i].x == game->food.x && game->snake.segments[i].y == game->food.y) {
-                collision = true;
-                break;
-            }
-        }
-    } while (collision); // Repeat if food is placed on top of the snake
-}
-
 bool is_game_over(Game* game) {
     // Check if the snake hits the boundaries of the screen
-    if (game->snake.segments[0].x < 0 || game->snake.segments[0].x >= (MAX7219_SEG_NUM * 8) ||
+    // if (game->snake.segments[0].x < 0 || game->snake.segments[0].x >= (MAX7219_SEG_NUM * 8) ||
+    //     // game->snake.segments[0].y < 0 || game->snake.segments[0].y >= (MAX7219_SEG_NUM * 8)) {
+    //     //game->snake.segments[0].y < 0 || game->snake.segments[0].y >= 8) {
+    //     game->snake.segments[0].y < 0 || game->snake.segments[0].y >= (MAX7219_SEG_NUM * 8)) {
+    //     DEBUG_PRINT("Game over due to boundary collision\n"); // Debugging print statement
+    //     return true;
+    // }
+    if (game->snake.segments[0].x < 0 || game->snake.segments[0].x >= (8) ||
         game->snake.segments[0].y < 0 || game->snake.segments[0].y >= (MAX7219_SEG_NUM * 8)) {
         DEBUG_PRINT("Game over due to boundary collision\n"); // Debugging print statement
         return true;

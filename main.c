@@ -26,7 +26,7 @@
 //#include <stdlib.h> 
 //#include <util/delay.h>
 //#include <stdbool.h>
-//#include <time.h>
+#include <time.h>
 #include "millis.h"
 #include "uart.h"
 #include "debug.h"
@@ -34,7 +34,8 @@
 
 int main(void) {
     
-    srand(time(NULL));
+    //srand(time(NULL));
+    srand(readAnalog(0));
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
     adc_init(); // Initialize ADC for joystick
@@ -47,5 +48,6 @@ int main(void) {
     wait_for_select_button();
 
     game_loop();     // Start the game loop
+    render_game_over_message();
     return 0;        // Return code
 }
