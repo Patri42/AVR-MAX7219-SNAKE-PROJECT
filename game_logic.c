@@ -50,8 +50,9 @@ void snake_grow(Snake* snake) {
 }
 
 // Check collision with food
-bool check_food_collision(Snake* snake, int foodX, int foodY) {
+bool check_food_collision(Snake* snake, int foodY, int foodX) {
     return snake->segments[0].x == foodX && snake->segments[0].y == foodY;
+    
 }
 
 Direction read_joystick_direction(Direction current_direction) {
@@ -158,7 +159,7 @@ void game_loop() {
 
     // Set up time tracking
     millis_t lastUpdateTime = millis_get();
-    const millis_t updateInterval = 500; // Update every 500 milliseconds
+    const millis_t updateInterval = 300; // Update every 500 milliseconds
     DEBUG_PRINT("Millis setup\n");
 
     while (true) {
@@ -180,8 +181,9 @@ void game_loop() {
             // Check for food collision and grow the snake if necessary
             if (check_food_collision(&game.snake, game.food.x, game.food.y)) {
                 DEBUG_PRINT("Food collision detected\n"); // Debugging print statement
+                //update_snake_direction(&game.snake, current_direction);
                 snake_grow(&game.snake);  // <-- Move snake_grow() here
-                update_snake_direction(&game.snake, current_direction); 
+                //update_snake_direction(&game.snake, current_direction); 
                 place_food(&game);
                 DEBUG_PRINT("New food init\n");
                 // snake_grow(&game.snake);

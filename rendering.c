@@ -83,7 +83,7 @@ void render_game(Game* game) {
         if (x >= 0 && y >= 0) { // Only render if coordinates are valid
             DEBUG_PRINT("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
             max7219b_set(y, x);
-            //max7219b_set(x, y);
+            
         }
     }
 
@@ -91,7 +91,8 @@ void render_game(Game* game) {
     int foodX = game->food.x;
     int foodY = game->food.y;
     DEBUG_PRINT("Rendering food segment at (%d, %d)\n", foodX, foodY); // Debug Print 
-    max7219b_set(foodY, foodX);
+    // max7219b_set(foodY, foodX);
+    max7219b_set(foodX, foodY);
 
     // Output the updated buffer to display
     max7219b_out();
