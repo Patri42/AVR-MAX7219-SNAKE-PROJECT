@@ -7,7 +7,7 @@ void display_init(void) {
 }
 
 // Sets a specific pixel on the display at position (x, y).
-void display_set(int x, int y) {
+void display_set(uint8_t x, uint8_t y) {
     max7219b_set(y, x);
 }
 

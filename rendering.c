@@ -13,9 +13,9 @@ const uint8_t LETTER_A[MAX7219_BUFFER_SIZE] = {0x18, 0x24, 0x42, 0x7E, 0x42, 0x4
 const uint8_t LETTER_M[MAX7219_BUFFER_SIZE] = {0x42, 0x66, 0x5A, 0x42, 0x42, 0x42, 0x42, 0x00};
 const uint8_t LETTER_E[MAX7219_BUFFER_SIZE] = {0x3F, 0x01, 0x01, 0x1F, 0x01, 0x01, 0x3F, 0x00};
 
-void render_character(const uint8_t* character, int position) {
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
+void render_character(const uint8_t* character, uint8_t position) {
+    for (uint8_t row = 0; row < 8; row++) {
+        for (uint8_t col = 0; col < 8; col++) {
             if (character[row] & (1 << col)) {
                 max7219b_set(col + position, row);
                 // max7219b_set(row, col + position);
@@ -26,7 +26,7 @@ void render_character(const uint8_t* character, int position) {
 
 void render_game_over_message() {
     DEBUG_PRINT("Entered render_game_over_message\n");
-    int startPosition = MAX7219_BUFFER_SIZE; // Adjust this based on your display's size
+    uint8_t startPosition = MAX7219_BUFFER_SIZE; // Adjust this based on your display's size
 
 	millis_t previousMillis = millis_get();
     millis_t currentMillis = 0; // initialize it with some value
@@ -34,20 +34,20 @@ void render_game_over_message() {
     // Slide the "GAME" message from right to left
     //for (int position = 0; position < MAX7219_BUFFER_SIZE * 2; position++) {
     //for (int position = MAX7219_BUFFER_SIZE + 26; position >= -MAX7219_BUFFER_SIZE * 4; position--) {
-    for (int position = MAX7219_BUFFER_SIZE + 26; position >= -MAX7219_BUFFER_SIZE; position--) {
+    for (uint8_t position = MAX7219_BUFFER_SIZE + 26; position >= -MAX7219_BUFFER_SIZE; position--) {
         DEBUG_PRINT("Loop iteration started\n");
         // Clear the previous frame
         max7219b_clrAll();
 
         // Render each letter at the current position
         render_character(LETTER_E, position);
-         DEBUG_PRINT("Rendering 'E' at position: %d\n", position);
+            DEBUG_PRINT("Rendering 'E' at position: %d\n", position);
         render_character(LETTER_M, position - 8);  // 8 columns away from G
-         DEBUG_PRINT("Rendering 'M' at position: %d\n", position - 8);
+            DEBUG_PRINT("Rendering 'M' at position: %d\n", position - 8);
         render_character(LETTER_A, position - 16); // 16 columns away from G
-        DEBUG_PRINT("Rendering 'A' at position: %d\n", position - 16);
+            DEBUG_PRINT("Rendering 'A' at position: %d\n", position - 16);
         render_character(LETTER_G, position - 24); // 24 columns away from G
-        DEBUG_PRINT("Rendering 'G' at position: %d\n", position - 24);
+            DEBUG_PRINT("Rendering 'G' at position: %d\n", position - 24);
 
         // Output the updated buffer to display
         max7219b_out();
@@ -77,9 +77,9 @@ void render_game(Game* game) {
     max7219b_clrAll();
 
     // Render snake
-    for(int i = 0; i < game->snake.length; i++) {
-        int x = game->snake.segments[i].x;
-        int y = game->snake.segments[i].y;
+    for(uint8_t i = 0; i < game->snake.length; i++) {
+        uint8_t x = game->snake.segments[i].x;
+        uint8_t y = game->snake.segments[i].y;
         if (x >= 0 && y >= 0) { // Only render if coordinates are valid
             DEBUG_PRINT("Rendering snake segment at (%d, %d)\n", x, y); // Debug Print 
             max7219b_set(y, x);
@@ -88,8 +88,8 @@ void render_game(Game* game) {
     }
 
     // Render the food
-    int foodX = game->food.x;
-    int foodY = game->food.y;
+    uint8_t foodX = game->food.x;
+    uint8_t foodY = game->food.y;
     DEBUG_PRINT("Rendering food segment at (%d, %d)\n", foodX, foodY); // Debug Print 
     // max7219b_set(foodY, foodX);
     max7219b_set(foodX, foodY);

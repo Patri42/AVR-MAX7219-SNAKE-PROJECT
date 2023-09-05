@@ -1,0 +1,11 @@
+Next to do:
+
+food not able to reproduce on the body of the snake
+
+blinking twice when dead
+
+om man krockar med sig själv eller kant “END”
+
+om det inte går att plotta ut nån ny = “WIN”
+
+Github readme 

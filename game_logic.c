@@ -5,6 +5,7 @@
 #include "millis.h"
 #include "debug.h"
 #include <util/delay.h>
+#include <stdint.h>
 
 // Initialize the snake
 void snake_init(Snake* snake) {
@@ -19,19 +20,19 @@ void snake_init(Snake* snake) {
     // for(int i = 0; i < MAX_SNAKE_LENGTH; i++) {
     //     snake->segments[i].x = (i == 0) ? 1 : -1; // Only the head is given a valid position
     //     snake->segments[i].y = (i == 0) ? 1 : -1;
-    for(int i = 1; i < MAX_SNAKE_LENGTH; i++) {  // Start the loop from 1, not 0
+    for(uint8_t i = 1; i < MAX_SNAKE_LENGTH; i++) {  // Start the loop from 1, not 0
         snake->segments[i].x = -1;
         snake->segments[i].y = -1;
     }
 }
 
 // Move the snake
-void snake_move(Snake* snake, int dirX, int dirY) {
+void snake_move(Snake* snake, int8_t dirX, int8_t dirY) {
     // Save the tail segment's position
     Segment tail = snake->segments[snake->length - 1];
     
     // Move the tail
-    for(int i = snake->length - 1; i > 0; i--) {
+    for(uint8_t i = snake->length - 1; i > 0; i--) {
         snake->segments[i] = snake->segments[i - 1];
     }
 
@@ -55,14 +56,14 @@ void snake_grow(Snake* snake) {
 }
 
 // Check collision with food
-bool check_food_collision(Snake* snake, int foodY, int foodX) {
+bool check_food_collision(Snake* snake, int8_t foodY, int8_t foodX) {
     return snake->segments[0].x == foodX && snake->segments[0].y == foodY;
     
 }
 
 Direction read_joystick_direction(Direction current_direction) {
-    int horz = 1023 - analogRead(HORZ_PIN); // Read horizontal joystick value
-    int vert = 1023 - analogRead(VERT_PIN); // Read vertical joystick value
+    uint16_t horz = 1023 - analogRead(HORZ_PIN); // Read horizontal joystick value
+    uint16_t vert = 1023 - analogRead(VERT_PIN); // Read vertical joystick value
 
     if (vert < JOYSTICK_THRESHOLD_LOW) return LEFT;
     if (vert > JOYSTICK_THRESHOLD_HIGH) return RIGHT;
@@ -80,9 +81,11 @@ bool is_opposite_direction(Direction current, Direction new_direction) {
     return false;
 }
 
-int x = 0; // Initialize x position
-int y = 0; // Initialize y position
+int16_t x = 0; // Initialize x position
+int16_t y = 0; // Initialize y position
 Direction current_direction = RIGHT; // Start with a right direction
+
+
 
 void place_food(Game* game) {
     DEBUG_PRINT("Placing food\n"); // Debugging
@@ -91,7 +94,7 @@ void place_food(Game* game) {
         collision = false;
         game->food.x = rand() % (MAX7219_SEG_NUM * 8);
         game->food.y = rand() % 8;
-        for(int i = 0; i < game->snake.length; i++) {
+        for(int8_t i = 0; i < game->snake.length; i++) {
             if(game->snake.segments[i].x == game->food.x && game->snake.segments[i].y == game->food.y) {
                 collision = true;
                 break;
@@ -110,8 +113,8 @@ void init_game(Game* game) {
 }
 
 void update_snake_direction(Snake* snake, Direction current_direction) {
-    int dirX = 0;
-    int dirY = 0;
+    int8_t dirX = 0;
+    int8_t dirY = 0;
     switch (current_direction) {
         case UP: dirY = -1; break;
         case DOWN: dirY = 1; break;
@@ -137,7 +140,7 @@ bool is_game_over(Game* game) {
     }
 
     // Check if the snake hits itself
-    for (int i = 1; i < game->snake.length; i++) {
+    for (uint8_t i = 1; i < game->snake.length; i++) {
         if (game->snake.segments[0].x == game->snake.segments[i].x &&
             game->snake.segments[0].y == game->snake.segments[i].y) {
             DEBUG_PRINT("Game over due to self collision\n"); // Debugging print statement

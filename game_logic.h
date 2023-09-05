@@ -2,6 +2,7 @@
 #define GAME_LOGIC_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #define MAX_SNAKE_LENGTH 100
 
@@ -12,7 +13,7 @@ typedef struct {
 
 typedef struct {
     Segment segments[MAX_SNAKE_LENGTH];
-    int length;
+    uint8_t length;
     bool hasGrown;
 } Snake;
 
@@ -24,7 +25,7 @@ typedef enum {
 } Direction;
 
 typedef struct {
-    int x, y;
+    int8_t x, y;
 } Point;
 
 typedef struct {
@@ -34,9 +35,9 @@ typedef struct {
 } Game;
 
 void snake_init(Snake* snake);
-void snake_move(Snake* snake, int dirX, int dirY);
+void snake_move(Snake* snake, int8_t dirX, int8_t dirY);
 void snake_grow(Snake* snake);
-bool check_food_collision(Snake* snake, int foodX, int foodY);
+bool check_food_collision(Snake* snake, int8_t foodX, int8_t foodY);
 Direction read_joystick_direction(Direction current_direction);
 bool is_opposite_direction(Direction current, Direction new_direction);
 void init_game(Game* game);
