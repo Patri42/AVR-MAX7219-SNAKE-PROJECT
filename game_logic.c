@@ -10,13 +10,18 @@
 void snake_init(Snake* snake) {
     snake->length = 1;
     //Randomize the starting position of the head within the game's boundaries
-    snake->segments[0].x = rand() % (MAX7219_SEG_NUM * 8);
+    // snake->segments[0].x = rand() % (MAX7219_SEG_NUM * 8);
     snake->segments[0].y = rand() % (MAX7219_SEG_NUM * 8);
+    // snake->segments[0].y = rand() % (MAX7219_SEG_NUM * 8);
+    snake->segments[0].x = rand() % 8;
     
 
-    for(int i = 0; i < MAX_SNAKE_LENGTH; i++) {
-        snake->segments[i].x = (i == 0) ? 1 : -1; // Only the head is given a valid position
-        snake->segments[i].y = (i == 0) ? 1 : -1;
+    // for(int i = 0; i < MAX_SNAKE_LENGTH; i++) {
+    //     snake->segments[i].x = (i == 0) ? 1 : -1; // Only the head is given a valid position
+    //     snake->segments[i].y = (i == 0) ? 1 : -1;
+    for(int i = 1; i < MAX_SNAKE_LENGTH; i++) {  // Start the loop from 1, not 0
+        snake->segments[i].x = -1;
+        snake->segments[i].y = -1;
     }
 }
 
@@ -97,7 +102,7 @@ void place_food(Game* game) {
 }
 
 void init_game(Game* game) {
-    srand(analogRead(0));  // Seed the random number generator
+    //srand(analogRead(0));  // Seed the random number generator
     snake_init(&(game->snake)); // Initialize the snake
     place_food(game); // Place the food in a random location at game start
     DEBUG_PRINT("Init food placement\n");
@@ -149,6 +154,7 @@ void game_loop() {
     //sei();
     DEBUG_PRINT("Millis init\n");
 
+    srand(analogRead(0)); // < ---- Works within main
 
     // Initialize the game state
     Game game;

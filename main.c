@@ -34,8 +34,8 @@
 
 int main(void) {
     
-    //srand(time(NULL));
-    srand(analogRead(0));
+    srand(time(NULL));
+    //srand(analogRead(0));
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
     adc_init(); // Initialize ADC for joystick
