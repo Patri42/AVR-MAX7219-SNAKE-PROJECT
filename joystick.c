@@ -9,7 +9,7 @@ void joystick_init(void) {
 }
 
 // Function to read analog value from specified pin
-uint16_t readAnalog(uint8_t pin)
+uint16_t analogRead(uint8_t pin)
 {
     ADMUX = (ADMUX & 0xF8) | (pin & 0x07); // select the ADC channel
     ADCSRA |= (1 << ADSC); // start the conversion

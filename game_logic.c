@@ -56,8 +56,8 @@ bool check_food_collision(Snake* snake, int foodY, int foodX) {
 }
 
 Direction read_joystick_direction(Direction current_direction) {
-    int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
-    int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
+    int horz = 1023 - analogRead(HORZ_PIN); // Read horizontal joystick value
+    int vert = 1023 - analogRead(VERT_PIN); // Read vertical joystick value
 
     if (vert < JOYSTICK_THRESHOLD_LOW) return LEFT;
     if (vert > JOYSTICK_THRESHOLD_HIGH) return RIGHT;
@@ -97,6 +97,7 @@ void place_food(Game* game) {
 }
 
 void init_game(Game* game) {
+    srand(analogRead(0));  // Seed the random number generator
     snake_init(&(game->snake)); // Initialize the snake
     place_food(game); // Place the food in a random location at game start
     DEBUG_PRINT("Init food placement\n");

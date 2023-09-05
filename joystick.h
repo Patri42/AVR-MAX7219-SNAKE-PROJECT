@@ -26,7 +26,7 @@
 #define ADC_PRESCALER_DIVISION (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0) // ADC prescaler division=128 (16Mhz/128=125Khz)
 
 void joystick_init(void);
-uint16_t readAnalog(uint8_t pin);
+uint16_t analogRead(uint8_t pin);
 void wait_for_select_button(void);
 
 #endif 
