@@ -34,6 +34,7 @@ typedef struct {
     bool isGameOver; // Flag for game over status
 } Game;
 
+
 void snake_init(Snake* snake);
 void snake_move(Snake* snake, int8_t dirX, int8_t dirY);
 void snake_grow(Snake* snake);

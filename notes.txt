@@ -1,5 +1,8 @@
 Next to do:
 
+GAME not appears initially with debug function
+
+
 food not able to reproduce on the body of the snake
 
 blinking twice when dead
@@ -8,4 +11,8 @@ om man krockar med sig själv eller kant “END”
 
 om det inte går att plotta ut nån ny = “WIN”
 
+Unit testing
+
 Github readme 
+
+

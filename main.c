@@ -29,25 +29,25 @@
 #include <time.h>
 #include "millis.h"
 #include "uart.h"
-#include "debug.h"
+//#include "debug.h"
 #include "game_logic.h"
 
 int main(void) {
     
+    millis_init(); // Initialize millis
+    sei(); // Enable global interrupts
+
     srand(time(NULL));
     //srand(analogRead(0));
     init_serial(); // Initialize serial communication
     max7219_init(); // Initialize the display (if applicable)
     adc_init(); // Initialize ADC for joystick
 
-    millis_init(); // Initialize millis
-    sei(); // Enable global interrupts
+    //render_game_over_message();
 
-    render_game_over_message();
-
-    wait_for_select_button();
+    //wait_for_select_button();
 
     game_loop();     // Start the game loop
-    render_game_over_message();
+    //render_game_over_message(); <-- Already exists in gameloop when game over
     return 0;        // Return code
 }

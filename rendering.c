@@ -56,7 +56,7 @@ void render_game_over_message() {
         while(true) {
             currentMillis = millis_get();
             
-            if(currentMillis - previousMillis >= 50) { // Check if 50ms has passed
+            if(currentMillis - previousMillis >= 50) { // Check if 50ms has passed (speed of scroll)
                 previousMillis = currentMillis; // Reset the previous time
                 break;
             }

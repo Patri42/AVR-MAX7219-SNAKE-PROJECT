@@ -4,8 +4,10 @@
 #include "joystick.h"
 #include "millis.h"
 #include "debug.h"
+#include "rendering.h"
 #include <util/delay.h>
 #include <stdint.h>
+//#include <util/atomic.h>
 
 // Initialize the snake
 void snake_init(Snake* snake) {
@@ -24,6 +26,7 @@ void snake_init(Snake* snake) {
         snake->segments[i].x = -1;
         snake->segments[i].y = -1;
     }
+    
 }
 
 // Move the snake
@@ -158,6 +161,9 @@ void game_loop() {
     DEBUG_PRINT("Millis init\n");
 
     srand(analogRead(0)); // < ---- Works within main
+
+    render_game_over_message();  // display the "GAME" message
+    wait_for_select_button();    // wait for the select button to be pressed
 
     // Initialize the game state
     Game game;
