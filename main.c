@@ -37,16 +37,16 @@ int main () {
         int horz = 1023 - readAnalog(HORZ_PIN); // Read horizontal joystick value
         int vert = 1023 - readAnalog(VERT_PIN); // Read vertical joystick value
 
-        if (vert < 300) {
+        if (horz > 700) {
             y = y < (MAX7219_SEG_NUM * 8 - 1) ? y + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase y if joystick moves up and within display limit
         }
-        if (vert > 700) {
+        if (horz < 300) {
             y = y > 0 ? y - 1 : 0; // Decrease y if joystick moves down and within display limit
         }
-        if (horz > 700) {
+        if (vert > 700) {
             x = x < (MAX7219_SEG_NUM * 8 - 1) ? x + 1 : (MAX7219_SEG_NUM * 8 - 1); // Increase x if joystick moves right and within display limit
         }
-        if (horz < 300) {
+        if (vert < 300) {
             x = x > 0 ? x - 1 : 0; // Decrease x if joystick moves left and within display limit
         }
       
