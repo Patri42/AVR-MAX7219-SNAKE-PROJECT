@@ -14,6 +14,9 @@
  * - CLK is connected to Arduino Uno pin D13
  * - GND is connected to Arduino Uno pin GND
  * - VCC is connected to Arduino Uno pin 5V
+ * 
+ * Upload and simulate to:
+ * https://wokwi.com/projects/296234816685212169
  */
 
 #include "joystick.h"
