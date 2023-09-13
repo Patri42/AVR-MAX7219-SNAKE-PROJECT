@@ -63,13 +63,10 @@ Move the joystick to draw on the LED matrices. Press the select button to clear 
 
 ### Uploading to Wokwi
 
-1. Go to [Wokwi](https://wokwi.com/).
-2. Create a new Arduino project or open an existing one.
-3. Click on the "Files" tab in the left sidebar.
-4. Upload the generated HEX file.
-5. Click "Run" to start the simulation.
-
-You can also directly simulate the project using this [Wokwi Project Link](https://wokwi.com/projects/296234816685212169).
+1. Go to [Wokwi Project Link](https://wokwi.com/projects/296234816685212169).
+2. Press F1 in the code area to get the pulldown menu
+3. Write Firmware and choose 'Upload Firmware and Start Simulation'
+4. Upload the generated HEX file to start the simulation.
 
 ### Additional Notes
 
