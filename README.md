@@ -1,5 +1,6 @@
 # AVR-MAX7219-SNAKE-PROJECT
 ## Arduino Etch A Sketch on 8x8 LED Matrices
+![Project Image](./setup/setup.png)
 ### Description
 This project is an Etch A Sketch game implemented on two 8x8 LED matrices controlled by a joystick and an Arduino. The game allows users to draw patterns on the LED matrices using the joystick.
 
