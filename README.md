@@ -7,6 +7,9 @@ This project is an Etch A Sketch game implemented on two 8x8 LED matrices contro
 
 - [Installation](#installation)
 - [Usage](#usage)
+- [Hardware Setup](#hardware-setup)
+- [Compilation and Simulation](#compilation-and-simulation)
+- [File Structure](#file-structure)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -18,16 +21,70 @@ This project is an Etch A Sketch game implemented on two 8x8 LED matrices contro
 - Joystick with select button
 
 ### Software Requirements
-- Arduino IDE
+
 
 ### Setup
-1. Connect the LED matrices to the Arduino board.
-2. Connect the joystick to the Arduino board.
-3. Upload the Arduino code to the board.
+1. Connect the LED matrices to the Arduino Uno board.
+2. Connect the joystick to the Arduino Uno board.
+3. Upload the code to the board.
 
 ## Usage
-
 Move the joystick to draw on the LED matrices. Press the select button to clear the screen.
+
+## Hardware Setup
+
+### Joystick:
+- **HORZ** is connected to Arduino Uno pin **A1**
+- **VERT** is connected to Arduino Uno pin **A0**
+- **SEL** is connected to Arduino Uno pin **D2**
+- **GND** is connected to Arduino Uno pin **GND**
+- **VCC** is connected to Arduino Uno pin **5V**
+
+### Matrix:
+- **CS** is connected to Arduino Uno pin **D10**
+- **DIN** is connected to Arduino Uno pin **D11**
+- **CLK** is connected to Arduino Uno pin **D13**
+- **GND** is connected to Arduino Uno pin **GND**
+- **VCC** is connected to Arduino Uno pin **5V**
+
+## Compilation and Simulation
+
+### Compiling to HEX File
+
+1. Open a terminal and navigate to the project directory.
+2. Make sure you have MinGW and the AVR toolchain installed and accessible from the terminal.
+3. Run the following command to compile the code into a HEX file:
+
+    ```bash
+    mingw32-make all
+    ```
+
+    This will generate a HEX file in the `bin/debug` or `bin/release` directory, depending on the `DEBUG` flag setting in the Makefile.
+
+### Uploading to Wokwi
+
+1. Go to [Wokwi](https://wokwi.com/).
+2. Create a new Arduino project or open an existing one.
+3. Click on the "Files" tab in the left sidebar.
+4. Upload the generated HEX file.
+5. Click "Run" to start the simulation.
+
+You can also directly simulate the project using this [Wokwi Project Link](https://wokwi.com/projects/296234816685212169).
+
+### Additional Notes
+
+- The Makefile uses the AVR toolchain located at `C:\avr\bin\`. Make sure to install it there or update the Makefile with the correct path.
+- The `PORT` variable in the Makefile is set to `\\\\.\\COM3`. Update this if your Arduino is connected to a different COM port.
+You can upload and simulate the project using this [Wokwi Project Link](https://wokwi.com/projects/296234816685212169).
+
+## File Structure
+* Makefile: Used for compiling and uploading the code.
+* display.c and display.h: Handle the display logic for the LED matrices.
+* joystick.c and joystick.h: Handle the joystick input.
+* main.c: The main loop and setup for the Arduino.
+* max72xx.c and max72xx.h: Libraries for controlling the MAX72xx LED driver.
+* pin_defs.h: Definitions for pin configurations.
+* uart.c and uart.h: Handle UART communication (if applicable).
 
 ## Contributing
 
