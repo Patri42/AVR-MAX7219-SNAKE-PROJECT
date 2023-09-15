@@ -15,15 +15,16 @@ This project is an Etch A Sketch game implemented on two 8x8 LED matrices contro
 - [Contributing](#contributing)
 - [License](#license)
 
-## Installation
-
 ### Hardware Requirements
 - Arduino board
 - Two 8x8 LED matrices
 - Joystick with select button
 
 ### Software Requirements
-
+- VS Code IDE
+- C/C++ extension in VS Code
+- Makefile extension in VS Code
+- Mingw-w64 
 
 ### Setup
 1. Connect the LED matrices to the Arduino Uno board.
